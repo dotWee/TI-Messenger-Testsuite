@@ -55,6 +55,51 @@ Additional configuration possibilities are described in link:doc/userguide/DevGu
 
 After test execution the test report and additional information can be found at link:target/site/serenity/index.html[target/site/serenity/index.html].
 
+=== Docker
+
+The container image runs the testsuite via Maven and is intended to be used in a cluster by providing configuration and test selection through environment variables and mounted volumes.
+
+Build the image:
+
+```
+docker build -t ti-messenger-testsuite:local .
+```
+
+Run locally with defaults:
+
+```
+docker run --rm \
+  -v "$PWD/target:/testsuite/target" \
+  -v "$PWD/.m2:/maven/.m2" \
+  ti-messenger-testsuite:local
+```
+
+Run with custom test selection:
+
+```
+docker run --rm \
+  -e MAVEN_PROFILE="oneonly,prod,dont-break-preparation" \
+  -e MAVEN_ARGS="-DpoolGroupString=RU1 -Dcucumber.filter.tags=@Zul:Pro" \
+  -v "$PWD/target:/testsuite/target" \
+  -v "$PWD/.m2:/maven/.m2" \
+  ti-messenger-testsuite:local
+```
+
+Environment variables:
+
+- `MAVEN_GOAL` (default: `verify`) sets the Maven goal.
+- `MAVEN_PROFILE` (default: `cluster`) sets Maven profiles (comma-separated).
+- `MAVEN_ARGS` (default: empty) additional Maven arguments (for example `-DpoolGroupString=...`).
+- `MAVEN_POM` (default: `pom.xml`) selects a different POM if required.
+- `MAVEN_REPO` (default: `/maven/.m2`) local Maven repository path.
+- `MAVEN_BATCH` (default: `true`) enables Maven batch mode.
+
+To override the entrypoint, pass a command to the container, for example:
+
+```
+docker run --rm ti-messenger-testsuite:local mvn -version
+```
+
 == Contributing
 
 The guideline for contributing to the project can be found at link:CONTRIBUTING.md[CONTRIBUTING.md].
