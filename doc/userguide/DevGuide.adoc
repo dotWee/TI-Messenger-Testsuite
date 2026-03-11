@@ -66,6 +66,42 @@ The processed files are used when the test suite is started.
 With a small number of interfaces that lack sufficient variation in their properties, the plugin may quickly cause the build process to fail.
 To ignore this, the following steps can be configured.
 
+==== Select a different combine_items file
+
+By default, the testsuite uses link:{sourcedir}/test/resources/combine_items.json[combine_items.json] to configure test combinations.
+A different file can be selected using either a Maven profile or a system property.
+
+The following Maven profiles are available for the pre-defined CI variants:
+
+[cols="1,2"]
+|===
+|Profile |File used
+
+|`ci`
+|`src/test/resources/combine_items_ci.json`
+
+|`ci-V2`
+|`src/test/resources/combine_items_ci_V2.json`
+
+|`ci-V3`
+|`src/test/resources/combine_items_ci_V3.json`
+
+|`ci-11x`
+|`src/test/resources/combine_items_ci_11x.json`
+|===
+
+Example:
+
+----
+mvn verify -P ci
+----
+
+Alternatively, any arbitrary file path can be specified directly via the `combine.items.file` system property:
+
+----
+mvn verify -Dcombine.items.file=/path/to/custom_combine_items.json
+----
+
 ==== Disable prepare-items (autofill combine_items.json)
 
 By default, the plugin queries the info interface and adds necessary tags and properties.

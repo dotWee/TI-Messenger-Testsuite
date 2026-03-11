@@ -339,6 +339,38 @@
         <cutest.break.tablesize>false</cutest.break.tablesize>
       </properties>
     </profile>
+    <profile>
+      <id>ci</id>
+      <properties>
+        <combine.items.file>
+          ${project.basedir}/src/test/resources/combine_items_ci.json
+        </combine.items.file>
+      </properties>
+    </profile>
+    <profile>
+      <id>ci-V2</id>
+      <properties>
+        <combine.items.file>
+          ${project.basedir}/src/test/resources/combine_items_ci_V2.json
+        </combine.items.file>
+      </properties>
+    </profile>
+    <profile>
+      <id>ci-V3</id>
+      <properties>
+        <combine.items.file>
+          ${project.basedir}/src/test/resources/combine_items_ci_V3.json
+        </combine.items.file>
+      </properties>
+    </profile>
+    <profile>
+      <id>ci-11x</id>
+      <properties>
+        <combine.items.file>
+          ${project.basedir}/src/test/resources/combine_items_ci_11x.json
+        </combine.items.file>
+      </properties>
+    </profile>
     <!--      used to skip saving reports when tests are skipped-->
     <profile>
       <id>skipTests equal skip.saving.reports</id>
