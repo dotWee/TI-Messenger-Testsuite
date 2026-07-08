@@ -23,22 +23,15 @@ package de.gematik.tim.test.glue.api.info;
 import static de.gematik.tim.test.glue.api.ActorMemoryKeys.HOME_SERVER;
 import static de.gematik.tim.test.glue.api.TestdriverApiEndpoint.GET_INFO;
 import static de.gematik.tim.test.glue.api.devices.UseDeviceAbility.TEST_CASE_ID_HEADER;
-import static de.gematik.tim.test.glue.api.threading.ClientFactory.getClient;
-import static de.gematik.tim.test.glue.api.utils.ParallelUtils.fromJson;
 import static de.gematik.tim.test.glue.api.utils.RequestResponseUtils.parseResponse;
 import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.getTestcaseId;
 
-import de.gematik.tim.test.glue.api.threading.ParallelQuestionRunner;
 import de.gematik.tim.test.models.InfoObjectDTO;
-import lombok.SneakyThrows;
 import net.serenitybdd.screenplay.Actor;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
+import net.serenitybdd.screenplay.Question;
 import org.jetbrains.annotations.NotNull;
 
-public class ApiInfoQuestion extends ParallelQuestionRunner<InfoObjectDTO> {
+public class ApiInfoQuestion implements Question<InfoObjectDTO> {
 
   public static ApiInfoQuestion apiInfo() {
     return new ApiInfoQuestion();
@@ -49,24 +42,6 @@ public class ApiInfoQuestion extends ParallelQuestionRunner<InfoObjectDTO> {
     actor.attemptsTo(
         GET_INFO.request().with(res -> res.header(TEST_CASE_ID_HEADER, getTestcaseId())));
     InfoObjectDTO info = parseResponse(InfoObjectDTO.class);
-    String homeserver = info.getHomeserver();
-    homeserver = addHttpsIfNotSet(homeserver);
-    actor.remember(HOME_SERVER, homeserver);
-    return info;
-  }
-
-  @Override
-  @SneakyThrows
-  public InfoObjectDTO searchParallel() {
-    final CloseableHttpClient client = getClient();
-    final HttpGet request = new HttpGet(GET_INFO.getResolvedPath(actor));
-    request.addHeader(TEST_CASE_ID_HEADER, getTestcaseId());
-    String jsonString;
-    try (final CloseableHttpResponse response = client.execute(request)) {
-      final HttpEntity entity = response.getEntity();
-      jsonString = entity != null ? new String(entity.getContent().readAllBytes()) : "";
-    }
-    final InfoObjectDTO info = fromJson(jsonString, InfoObjectDTO.class);
     String homeserver = info.getHomeserver();
     homeserver = addHttpsIfNotSet(homeserver);
     actor.remember(HOME_SERVER, homeserver);

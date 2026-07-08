@@ -1,7 +1,8 @@
 # language: de
 @File:FeatureFile_08X_02_V3_Basis @Ctl:UseCaseV3_08X_Basis @Ctl:ProKKHBA
-@PRODUKT:TI-M_Client_Basis
+@PRODUKT:TI-M_Client_Basis @PRODUKT:VZD_FHIR
 @ZulV3:Pro @ZulV3:ProKK
+@AF-ID:AF_10036-02
 @AFO-ID:A_25479
 @AFO-ID:A_25428
 
@@ -9,6 +10,9 @@ Funktionalität: 08X. (2) Einträge im VZD-FHIR-Directory suchen (Basis Spec) [V
 
   Der Anwendungsfall beschreibt, wie ein Akteur im VZD-FHIR-Directory nach HealthcareService- undPractitionerRole-
   Ressourcen sucht. Dies setzt eine erfolgreiche Anmeldung des Akteurs an einem Messenger-Service voraus.
+
+  COMMENT: VZD_FHIR_Directory
+  AF_10036-02  Nutzer sucht Einträge im FHIR-Directory
 
   COMMENT: Basis
   A_25479     Search Token

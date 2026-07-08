@@ -27,8 +27,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 
-import de.gematik.tim.test.glue.api.threading.ParallelExecutor;
-import de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager;
 import io.cucumber.java.de.Dann;
 import io.cucumber.java.en.Then;
 import java.util.List;
@@ -40,27 +38,17 @@ public class GeneralStepsGlue {
   @Then("{string} receives a response code {int}")
   @Dann("erhält {string} einen Responsecode {int}")
   public static void checkResponseCode(String actorName, int responseCode) {
-    if (TestcasePropertiesManager.isRunningParallel()) {
-      assertThat(ParallelExecutor.getLastResponseCodeForActor(actorName)).isEqualTo(responseCode);
-    } else {
-      assertThat(lastResponse().statusCode())
-          .as("Operation returned unexpected code " + lastResponse().statusCode())
-          .isEqualTo(responseCode);
-    }
+    assertThat(lastResponse().statusCode())
+        .as("Operation returned unexpected code " + lastResponse().statusCode())
+        .isEqualTo(responseCode);
   }
 
   @Then("{string} receives any response code of {listOfInts}")
   @Dann("erhält {string} einen der Responsecodes {listOfInts}")
   public static void anyOfResponseCode(String actorName, List<Integer> responseCodes) {
-    if (TestcasePropertiesManager.isRunningParallel()) {
-      assertThat(responseCodes)
-          .as("Operation returned error code " + lastResponse().statusCode())
-          .contains(ParallelExecutor.getLastResponseCodeForActor(actorName));
-    } else {
-      assertThat(responseCodes)
-          .as("Operation returned error code " + lastResponse().statusCode())
-          .contains(lastResponse().statusCode());
-    }
+    assertThat(responseCodes)
+        .as("Operation returned error code " + lastResponse().statusCode())
+        .contains(lastResponse().statusCode());
   }
 
   @Then("{string} checks, that the response is not empty")

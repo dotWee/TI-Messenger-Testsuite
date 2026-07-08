@@ -44,11 +44,7 @@ import static de.gematik.tim.test.glue.api.room.questions.GetRoomsQuestion.ownRo
 import static de.gematik.tim.test.glue.api.utils.GlueUtils.prepareApiNameForHttp;
 import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.getTestcaseId;
 import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.registerActor;
-import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.setParallelFlag;
 import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.startTest;
-import static de.gematik.tim.test.glue.api.utils.TestsuiteInitializer.CLAIM_PARALLEL;
-import static de.gematik.tim.test.glue.api.utils.TestsuiteInitializer.NO_PARALLEL_TAG;
-import static java.lang.Boolean.TRUE;
 import static net.serenitybdd.rest.SerenityRest.lastResponse;
 import static net.serenitybdd.screenplay.actors.OnStage.stage;
 import static net.serenitybdd.screenplay.actors.OnStage.theActorCalled;
@@ -59,7 +55,6 @@ import static org.springframework.http.HttpStatus.OK;
 import de.gematik.tim.test.glue.api.cleanup.TestCaseContext;
 import de.gematik.tim.test.glue.api.exceptions.TestRunException;
 import de.gematik.tim.test.glue.api.rawdata.RawDataStatistics;
-import de.gematik.tim.test.glue.api.threading.ParallelExecutor;
 import de.gematik.tim.test.glue.api.utils.IndividualLogger;
 import de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager;
 import io.cucumber.datatable.DataTable;
@@ -80,17 +75,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.rest.abilities.CallAnApi;
 
 @Slf4j
 public class DevicesControllerGlue {
-
-  @Getter @Setter private static boolean allowParallelClaim = true;
 
   @Before
   public void setup(Scenario scenario) {
@@ -100,10 +90,6 @@ public class DevicesControllerGlue {
     startTest(scenario);
     RawDataStatistics.startTest();
     IndividualLogger.startTest();
-    setAllowParallelClaim(!scenario.getSourceTagNames().contains(NO_PARALLEL_TAG));
-    if (TRUE.equals(CLAIM_PARALLEL) && allowParallelClaim) {
-      setParallelFlag(true);
-    }
 
     final TestCase testCase = TestCaseContext.getTestCase();
     final List<TestStep> testSteps = testCase.getTestSteps();
@@ -131,36 +117,13 @@ public class DevicesControllerGlue {
     stage().drawTheCurtain();
     RawDataStatistics.addToReport();
     IndividualLogger.addToReport();
-    if (TRUE.equals(CLAIM_PARALLEL)) {
-      ParallelExecutor.reset();
-    }
-    setAllowParallelClaim(true);
   }
 
   @Given("Following clients are claimed:")
   @Angenommen("Es werden folgende Clients reserviert:")
   public void followingClientsWillBeClaimed(DataTable data) {
     List<ClaimInfo> claimInfos = data.asLists().stream().map(this::toClaimInfo).toList();
-    if (allowParallelClaim && TRUE.equals(CLAIM_PARALLEL)) {
-      handleParallel(claimInfos);
-      setParallelFlag(false);
-    } else {
-      claimInfos.forEach(this::claimSpecificDevice);
-    }
-  }
-
-  private void handleParallel(List<ClaimInfo> claimInfos) {
-    List<Callable<Void>> calls =
-        claimInfos.stream()
-            .map(
-                claimInfo ->
-                    (Callable<Void>)
-                        () -> {
-                          claimSpecificDevice(claimInfo);
-                          return null;
-                        })
-            .toList();
-    ParallelExecutor.run(calls);
+    claimInfos.forEach(this::claimSpecificDevice);
   }
 
   private void claimSpecificDevice(ClaimInfo claimInfo) {
@@ -177,7 +140,7 @@ public class DevicesControllerGlue {
 
   private void reserveClient(Actor actor, String apiName, ClientKind... neededKinds) {
     reserveClientOnApi(actor, apiName);
-    checkIs(List.of(neededKinds)).withActor(actor).run();
+    actor.attemptsTo(checkIs(List.of(neededKinds)));
     if (Arrays.asList(neededKinds).contains(ORG_ADMIN)) {
       actor.remember(IS_ORG_ADMIN, true);
     }
@@ -198,7 +161,7 @@ public class DevicesControllerGlue {
     actor.remember(ACCOUNT_PASSWORD, password);
     actor.remember(HOME_SERVER, homeServer);
 
-    actor.attemptsTo(login().withoutClearingRooms());
+    actor.attemptsTo(login());
     actor.asksFor(ownRooms());
   }
 
@@ -210,7 +173,7 @@ public class DevicesControllerGlue {
     String apiUrl = prepareApiNameForHttp(apiName);
     actor.whoCan(CallAnApi.at(apiUrl)).entersTheScene();
     registerActor(actor);
-    claimDevice().withActor(actor).run();
+    actor.attemptsTo(claimDevice());
     return actor;
   }
 

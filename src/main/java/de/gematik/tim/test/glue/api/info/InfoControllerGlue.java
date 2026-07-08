@@ -70,6 +70,6 @@ public class InfoControllerGlue {
   public void requestHomeServerAddressOnInfoEndpoint(String actorName, String apiName) {
     String apiUrl = prepareApiNameForHttp(apiName);
     Actor actor = theActorCalled(actorName).can(CallAnApi.at(apiUrl));
-    apiInfo().withActor(actor).run();
+    actor.asksFor(apiInfo());
   }
 }

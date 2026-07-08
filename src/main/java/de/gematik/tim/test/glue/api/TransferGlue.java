@@ -23,9 +23,7 @@ package de.gematik.tim.test.glue.api;
 import static lombok.AccessLevel.PRIVATE;
 
 import io.cucumber.java.de.Dann;
-import io.cucumber.java.de.Und;
 import io.cucumber.java.de.Wenn;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.util.List;
@@ -61,5 +59,45 @@ public final class TransferGlue {
       Long timeout,
       Long pollIntervall) {
     //implement me
+  }
+
+  @When("{word} performs a Cleanup")
+  @Wenn("{word} ein Cleanup ausführt")
+  public void performCleanup(String actorName) {
+  }
+
+  @Then("check that {word} is logged out")
+  @Dann("prüfe, dass {word} ausgeloggt ist")
+  public void checkIfUserIsLoggedOut(String actorName) {
+  }
+
+  @Then("check that {word} has unclaimed a device")
+  @Dann("prüfe, dass KEIN Gerät mehr für {string} reserviert ist")
+  public void checkIfDeviceIsUnclaimedGivenActor(String actorName) {
+  }
+
+  @Then("{word} does not find {word} in FHIR [Retry {long} - {long}]")
+  @Dann("{word} findet {word} in FHIR NICHT [Retry {long} - {long}]")
+  public void checkUserIsNotFoundInFHIR(String actorName, String userName, Long timeout, Long pollIntervall) {
+  }
+
+  @Then("{word} does not find {word} im Healthcare-Service {string} NICHT [Retry {long} - {long}]")
+  @Dann("{word} findet {word} im Healthcare-Service {string} NICHT [Retry {long} - {long}]")
+  public void checkAddressIsNotFoundInHealthcareService(
+      String actorName,
+      String userName,
+      String hcsName,
+      Long timeout,
+      Long pollIntervall) {
+  }
+
+  @Then("{string} does not find {string} in FHIR via the FDV endpoint [Retry {long} - {long}]")
+  @Dann("{string} findet {string} in FHIR über die FDV-Schnittstelle NICHT [Retry {long} - {long}]")
+  public void checkUserIsNotFoundInFHIRFromEpaClient(String actorName, String userName, Long timeout, Long pollIntervall) {
+  }
+
+  @Then("{string} does not find the Healthcare-Service {string} [Retry {long} - {long}]")
+  @Dann("{string} findet Healthcare-Service {string} NICHT [Retry {long} - {long}]")
+  public void checkHealthcareServiceIsNotFound(String actorName, String hcsName, Long timeout, Long pollIntervall) {
   }
 }

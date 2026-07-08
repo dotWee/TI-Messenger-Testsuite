@@ -18,6 +18,10 @@
 :rootdir: ../../
 == Developer-Guide
 
+=== Setup
+
+This project uses JDK 21 and Maven 3.9.x (tested on version 3.9.15).
+
 === Start Cucumber scenario within the IDE (IntelliJ IDEA)
 
 In "run configuration":
@@ -38,7 +42,7 @@ The Tiger-Framework was used for the development of this testsuite.
 In the following link, you will find the link:https://gematik.github.io/app-Tiger/Tiger-User-Manual.html#_intellij[Tiger-Manual]
 for more information.
 
-If the clean endpoints should also be triggered from IntelliJ, the run configuration must also include
+To trigger the clean endpoints from IntelliJ, the run configuration must also include
 `-Dcucumber.plugin=de.gematik.tim.test.glue.api.utils.cleaning.CucumberListener` as a VM option.
 
 [[Disable-TLS]]
@@ -86,19 +90,62 @@ An error log can later be viewed at `./target/generated-combine/errorLog.txt` .
 
 The parameter `-DclaimDuration=<seconds>` can be used to influence the duration for which a device should remain claimed.
 Only integer second values are allowed.
-
-=== Parallel claims
-
-The parameter `-DclaimParallel=<true/false>` can be used to specify whether claims should be executed in parallel.
-By default, this is disabled.
-Parallel claims can be disabled for individual test cases or feature files by tagging them with `@NoParallel`.
-This can be helpful if there are issues with claiming.
+Default value is 180 seconds.
 
 === Testcase id
 
 Every testcase run is identified with the testcase name and an id that identifies the specific run.
 This id is sent in every request in the header `Test-Case-Id`.
 It is build like `<TestcaseId>/<TestrunUUID>`.
+
+=== Setting up a custom pom.xml file
+
+All shared configuration is defined in link:{rootdir}parent-pom.xml[parent-pom.xml].
+To adapt the testsuite to your environment, you can create a custom POM that extends this parent and overrides the relevant properties.
+This is especially useful if you want to maintain multiple configurations e.g. one for local development and one for CI.
+Run it with `mvn clean verify -f my-custom-pom.xml`.
+
+Minimal template:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>my-custom</artifactId>
+  <packaging>jar</packaging>
+
+  <parent>
+    <groupId>de.gematik.tim.test</groupId>
+    <artifactId>parent</artifactId>
+    <version>${revision}</version>
+    <relativePath>parent-pom.xml</relativePath>
+  </parent>
+
+  <properties>
+    <!-- Tiger configuration for your environment -->
+    <tiger.config.file>
+      ${project.basedir}/src/test/resources/tigerYml/tiger-my-custom.yml
+    </tiger.config.file>
+    <!-- combine-items file describing your test driver endpoints -->
+    <combine.items.file>
+      ${project.basedir}/src/test/resources/combineItems/combine_items_my_custom.json
+    </combine.items.file>
+    <!-- Feature template directories (comma-separated for multiple) -->
+    <feature.template.dir>${feature.template.dir.V3}</feature.template.dir>
+  </properties>
+</project>
+----
+
+Three common properties you might want to customise:
+
+. `tiger.config.file` – path to the Tiger YAML configuration for the target environment.
+. `combine.items.file` – path to the combine-items JSON describing the test driver endpoints.
+. `feature.template.dir` – one or more (comma-separated) directories containing the feature templates to use.
 
 === Known issues
 

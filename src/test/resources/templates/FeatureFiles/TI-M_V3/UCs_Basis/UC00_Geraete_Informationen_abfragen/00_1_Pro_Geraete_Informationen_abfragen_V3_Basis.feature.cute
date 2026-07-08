@@ -13,10 +13,12 @@ Funktionalität: 00 (1) Abfragen der Schnittstellen-Information und die Geräte-
   A_25641-01   Matrix Spezifikationsversion
 
   Inhalt
-  TF 1 - 2 Schnittstellen-Information
-  TF 3 - 4 Geräte-Liste
-  TF 5     Matrix Version prüfen
-  TF 6     Synapse Server Version abfragen
+  TF 1 - 2    Schnittstellen-Information
+  TF 3 - 4    Geräte-Liste
+  TF 5        Matrix Version prüfen
+  TF 6        Synapse Server Version abfragen
+  TF 7 - 9    Cleanup prüfen - Pro User
+  TF 10 - 11  Cleanup prüfen - OrgAdmin User
 
   @Ctl:SchnittstellenDatenPro
   @TCID:TIM_V3_BASIS_AF_000101 @PRIO:1 @TESTFALL:Positiv @STATUS:Implementiert
@@ -91,5 +93,89 @@ Funktionalität: 00 (1) Abfragen der Schnittstellen-Information und die Geräte-
 
   @Filter(ApiName1.hasTag("proClientV3")||(ApiName1.hasTag("proClientV3")&&ApiName1.hasTag("practitioner")))
 
-      Beispiele:
+    Beispiele:
+      | ApiName1 |
+
+  @WIP
+  @Ctl:SchnittstellenDatenPro
+  @TCID:TIM_V3_BASIS_AF_000107 @PRIO:1 @TESTFALL:Positiv @STATUS:InBearbeitung
+  Szenariogrundriss: 00.01.07 Cleanup - Pro User verlässt den Raum nach Cleanup
+    Angenommen Es werden folgende Clients reserviert:
+      | A | PRO_CLIENT | <ApiName1> |
+      | B | PRO_CLIENT | <ApiName2> |
+    Und        "A","B" setzen den eigenen Authorization Mode auf "AllowAll"
+    Und        "A" erstellt einen Chat-Raum "TIM Testraum 1"
+    Und        "A" lädt "B" in Chat-Raum "TIM Testraum 1" ein
+    Und        "B" erhält eine Einladung in Raum "TIM Testraum 1" von "A"
+    Und        "B" bestätigt eine Einladung in Raum "TIM Testraum 1" von "A"
+    Und        "B" ist dem Raum "TIM Testraum 1" beigetreten
+    Wenn       "B" ein Cleanup ausführt
+    Dann       "A" bestätigt, dass "B" den Chat-Raum verlassen hat
+
+    @Shuffle(true)
+    @DistinctProperty(homeserver)
+    @AllowSelfCombine(false)
+    @AllowDoubleLineup(true)
+    @Filter(ApiName1.hasTag("proClientV3"))
+    @Filter(ApiName2.hasTag("proClientV3"))
+
+    Beispiele:
+      | ApiName1 | ApiName2 |
+
+  @WIP
+  @Ctl:SchnittstellenDatenPro
+  @TCID:TIM_V3_BASIS_AF_000108 @PRIO:1 @TESTFALL:Negativ @STATUS:InBearbeitung
+  Szenariogrundriss: 00.01.08 Cleanup - Pro User ist nach Cleanup nicht mehr eingeloggt
+    Angenommen Es werden folgende Clients reserviert:
+      | A | PRO_CLIENT | <ApiName1> |
+    Und        "A" setzt den eigenen Authorization Mode auf "AllowAll"
+    Wenn       "A" ein Cleanup ausführt
+    Dann       prüfe, dass "A" ausgeloggt ist
+
+    @Filter(ApiName1.hasTag("proClientV3")||(ApiName1.hasTag("proClientV3")&&ApiName1.hasTag("practitioner")))
+
+    Beispiele:
+      | ApiName1 |
+
+  @WIP
+  @Ctl:SchnittstellenDatenPro
+  @TCID:TIM_V3_BASIS_AF_000109 @PRIO:1 @TESTFALL:Negativ @STATUS:InBearbeitung
+  Szenariogrundriss: 00.01.09 Cleanup - Device ist nach Cleanup nicht mehr für Pro User reserviert
+    Angenommen Es werden folgende Clients reserviert:
+      | A | PRO_CLIENT | <ApiName1> |
+    Wenn       "A" ein Cleanup ausführt
+    Dann       prüfe, dass KEIN Gerät mehr für "A" reserviert ist
+
+    @Filter(ApiName1.hasTag("proClientV3")||(ApiName1.hasTag("proClientV3")&&ApiName1.hasTag("practitioner")))
+
+    Beispiele:
+      | ApiName1 |
+
+  @WIP
+  @Ctl:SchnittstellenDatenPro
+  @TCID:TIM_V3_BASIS_AF_000110 @PRIO:1 @TESTFALL:Negativ @STATUS:InBearbeitung
+  Szenariogrundriss: 00.01.10 Cleanup - OrgAdmin ist nach Cleanup nicht mehr eingeloggt
+    Angenommen Es werden folgende Clients reserviert:
+      | A | ORG_ADMIN | <ApiName1> |
+    Und        "A" setzt den eigenen Authorization Mode auf "AllowAll"
+    Wenn       "A" ein Cleanup ausführt
+    Dann       prüfe, dass "A" ausgeloggt ist
+
+    @Filter(ApiName1.hasTag("orgAdmin"))
+
+    Beispiele:
+      | ApiName1 |
+
+  @WIP
+  @Ctl:SchnittstellenDatenPro
+  @TCID:TIM_V3_BASIS_AF_000111 @PRIO:1 @TESTFALL:Negativ @STATUS:InBearbeitung
+  Szenariogrundriss: 00.01.11 Cleanup - Device ist nach Cleanup nicht mehr für OrgAdmin reserviert
+    Angenommen Es werden folgende Clients reserviert:
+      | A | ORG_ADMIN | <ApiName1> |
+    Wenn       "A" ein Cleanup ausführt
+    Dann       prüfe, dass KEIN Gerät mehr für "A" reserviert ist
+
+    @Filter(ApiName1.hasTag("orgAdmin"))
+
+    Beispiele:
       | ApiName1 |

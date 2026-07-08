@@ -32,7 +32,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.InitializationException;
-import de.gematik.tim.test.glue.api.threading.ClientFactory;
 import de.gematik.tim.test.glue.api.utils.GlueUtils;
 import io.cucumber.core.gherkin.DataTableArgument;
 import io.cucumber.plugin.event.PickleStepTestStep;
@@ -70,7 +69,7 @@ public class CleanupTrigger {
   private static final List<CombineItem> combineItems;
   private static final Set<String> combineItemsUrls;
   private static final ThreadLocal<CloseableHttpClient> cleanUpClient =
-      ThreadLocal.withInitial(ClientFactory::getCleanUpClient);
+      ThreadLocal.withInitial(CleanUpClientFactory::getCleanUpClient);
   private static final ExecutorService executorService = Executors.newFixedThreadPool(10);
   private static final String CLAIMING_STEP_TEXT = "Es werden folgende Clients reserviert:";
 

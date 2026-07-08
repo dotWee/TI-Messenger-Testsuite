@@ -28,79 +28,26 @@ import static de.gematik.tim.test.glue.api.ActorMemoryKeys.IS_LOGGED_IN;
 import static de.gematik.tim.test.glue.api.ActorMemoryKeys.IS_ORG_ADMIN;
 import static de.gematik.tim.test.glue.api.ActorMemoryKeys.MX_ID;
 import static de.gematik.tim.test.glue.api.TestdriverApiEndpoint.LOGIN;
-import static de.gematik.tim.test.glue.api.devices.UseDeviceAbility.TEST_CASE_ID_HEADER;
 import static de.gematik.tim.test.glue.api.fhir.practitioner.FhirAuthenticateTask.authenticateOnFhirVzd;
 import static de.gematik.tim.test.glue.api.login.IsLoggedInAbility.logOut;
-import static de.gematik.tim.test.glue.api.room.questions.GetRoomsQuestion.ownRooms;
-import static de.gematik.tim.test.glue.api.room.tasks.ForgetRoomTask.forgetRoom;
-import static de.gematik.tim.test.glue.api.room.tasks.LeaveRoomTask.leaveRoom;
-import static de.gematik.tim.test.glue.api.threading.ParallelExecutor.getParallelClient;
-import static de.gematik.tim.test.glue.api.threading.ParallelExecutor.saveLastResponseCode;
 import static de.gematik.tim.test.glue.api.utils.GlueUtils.getHomeServerWithoutHttpAndPort;
-import static de.gematik.tim.test.glue.api.utils.ParallelUtils.fromJson;
-import static de.gematik.tim.test.glue.api.utils.ParallelUtils.toJson;
 import static de.gematik.tim.test.glue.api.utils.RequestResponseUtils.parseResponse;
-import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.getTestcaseId;
 import static de.gematik.tim.test.models.AuthStageNameDTO.BASIC_AUTH;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import de.gematik.tim.test.glue.api.fhir.practitioner.CanDeleteOwnMxidAbility;
 import de.gematik.tim.test.glue.api.rawdata.RawDataStatistics;
-import de.gematik.tim.test.glue.api.threading.ParallelTaskRunner;
-import de.gematik.tim.test.glue.api.utils.TestsuiteInitializer;
 import de.gematik.tim.test.models.AccountDTO;
 import de.gematik.tim.test.models.LoginDTO;
 import java.util.Optional;
-import lombok.SneakyThrows;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
 
-public class LoginTask extends ParallelTaskRunner implements Task {
-
-  private boolean clearRooms = TestsuiteInitializer.CLEAR_ROOMS;
+public class LoginTask implements Task {
 
   public static LoginTask login() {
     return new LoginTask();
-  }
-
-  public LoginTask withoutClearingRooms() {
-    this.clearRooms = false;
-    return this;
-  }
-
-  @Override
-  @SneakyThrows
-  public void runParallel() {
-    final CloseableHttpClient client = getParallelClient().get();
-    final Optional<LoginDTO> loginDto = getLoginDto(actor);
-
-    HttpPost post = new HttpPost(LOGIN.getResolvedPath(actor));
-    post.addHeader(TEST_CASE_ID_HEADER, getTestcaseId());
-    String jsonString;
-
-    if (loginDto.isPresent()) {
-      final StringEntity entity = new StringEntity(toJson(loginDto.get()));
-      post.setEntity(entity);
-      post.addHeader("Content-Type", "application/json");
-    }
-    try (final CloseableHttpResponse response = client.execute(post)) {
-      final int statusCode = response.getStatusLine().getStatusCode();
-      final HttpEntity entity = response.getEntity();
-      jsonString = entity != null ? new String(entity.getContent().readAllBytes()) : "";
-      if (actor.recall(IS_ORG_ADMIN) == null) {
-        RawDataStatistics.login(statusCode, response.getStatusLine().getReasonPhrase());
-      }
-      saveLastResponseCode(actor.getName(), statusCode);
-    }
-
-    final AccountDTO account = fromJson(jsonString, AccountDTO.class);
-    cleanRoomAndSetProperties(actor, account);
   }
 
   @Override
@@ -132,17 +79,6 @@ public class LoginTask extends ParallelTaskRunner implements Task {
     }
     actor.can(logOut());
     actor.remember(IS_LOGGED_IN, true);
-
-    if (clearRooms) {
-      ownRooms()
-          .withActor(actor)
-          .run()
-          .forEach(
-              room -> {
-                leaveRoom().withName(room.getName()).withActor(actor).run();
-                forgetRoom().withName(room.getName()).withActor(actor).run();
-              });
-    }
     if (nonNull(actor.abilityTo(CanDeleteOwnMxidAbility.class))) {
       actor.attemptsTo(authenticateOnFhirVzd());
     }

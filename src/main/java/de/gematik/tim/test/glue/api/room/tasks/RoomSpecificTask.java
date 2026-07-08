@@ -20,15 +20,12 @@
 
 package de.gematik.tim.test.glue.api.room.tasks;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import de.gematik.tim.test.glue.api.room.UseRoomAbility;
-import de.gematik.tim.test.glue.api.threading.ParallelTaskRunner;
 import lombok.Getter;
-import net.serenitybdd.screenplay.Actor;
+import net.serenitybdd.screenplay.Task;
 
 @Getter
-public abstract class RoomSpecificTask extends ParallelTaskRunner {
+public abstract class RoomSpecificTask implements Task {
 
   private String roomName;
 
@@ -36,19 +33,5 @@ public abstract class RoomSpecificTask extends ParallelTaskRunner {
   protected <T extends RoomSpecificTask> T forRoomName(String roomName) {
     this.roomName = roomName;
     return (T) this;
-  }
-
-  @Override
-  public void run() {
-    adjustRoom(actor);
-    super.run();
-  }
-
-  public <T extends Actor> void adjustRoom(T actor) {
-    UseRoomAbility useRoomAbility = actor.abilityTo(UseRoomAbility.class);
-    if (isNotBlank(getRoomName())) {
-      useRoomAbility.setActive(getRoomName());
-    }
-    roomName = useRoomAbility.getActiveKey();
   }
 }

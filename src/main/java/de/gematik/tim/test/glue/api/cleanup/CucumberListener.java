@@ -21,7 +21,6 @@
 package de.gematik.tim.test.glue.api.cleanup;
 
 import static de.gematik.tim.test.glue.api.cleanup.CleanupTrigger.removeClientOnCleanupTrigger;
-import static de.gematik.tim.test.glue.api.threading.ParallelExecutor.removeClientOnParallelExecutor;
 import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.createTestcaseId;
 import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.setDryRun;
 
@@ -41,7 +40,6 @@ public class CucumberListener extends SerenityReporterParallel {
 
   private void endTest(TestRunFinished t) {
     removeClientOnCleanupTrigger();
-    removeClientOnParallelExecutor();
     TestCaseContext.clear();
   }
 

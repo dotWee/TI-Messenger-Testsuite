@@ -12,21 +12,23 @@
   <description>Properties and dependencies for Testsuite</description>
 
   <properties>
-    <revision>3.1.1</revision>
+    <revision>3.1.2</revision>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <java.version>21</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <cucumber-test-combinations-maven-plugin.version>
-      2.11.8
+      2.12.0
     </cucumber-test-combinations-maven-plugin.version>
     <tiger.version>4.0.9</tiger.version>
     <serenity.core.version>5.3.10</serenity.core.version>
-    <polarion.toolbox.version>3.0.3-212</polarion.toolbox.version>
-    <ti.m.mtls.certs.version>2.2.4</ti.m.mtls.certs.version>
+    <polarion.toolbox.version>3.1.0-223</polarion.toolbox.version>
+    <ti.m.mtls.certs.version>2.2.7</ti.m.mtls.certs.version>
     <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
+    <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
     <maven.dependency.plugin.version>3.9.0</maven.dependency.plugin.version>
+    <lombok.version>1.18.46</lombok.version>
 
 
     <serenity.report.directory>${project.build.directory}/site/serenity</serenity.report.directory>
@@ -71,19 +73,16 @@
     <skip.save.tiger-yml>false</skip.save.tiger-yml>
     <custom.plugin>de.gematik.tim.test.glue.api.cleanup.CucumberListener</custom.plugin>
 
-    <maxRetryClaimRequest/>
-    <saveConnections/>
-    <claimParallel/>
-    <httpTimeout/>
-    <pool.group.string/>
-    <clearRooms/>
-    <cucumber.filter.version/>
-    <skipRoomStateCheck/>
-    <pollInterval/>
-    <timeout/>
     <claimDuration/>
     <cucumber.filter.tags/>
+    <cucumber.filter.version/>
     <cutest.count.format/>
+    <httpTimeout/>
+    <maxRetryClaimRequest/>
+    <pollInterval/>
+    <poolGroupString/>
+    <saveConnections/>
+    <timeout/>
   </properties>
 
   <distributionManagement>
@@ -139,12 +138,12 @@
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
-      <version>10.8</version>
+      <version>10.9.1</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.21.2</version>
+      <version>2.22.0</version>
     </dependency>
     <dependency>
       <groupId>net.minidev</groupId>
@@ -171,18 +170,18 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.44</version>
+      <version>${lombok.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.5.32</version>
+      <version>1.5.34</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>1.5.32</version>
+      <version>1.5.34</version>
     </dependency>
     <dependency>
       <groupId>jakarta.xml.bind</groupId>
@@ -207,6 +206,13 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.15.0</version>
         <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+          </annotationProcessorPaths>
           <encoding>${project.build.sourceEncoding}</encoding>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -248,7 +254,7 @@
           <proxyPort>${tim.fproxy.port}</proxyPort>
           <!--          Prepare item config-->
           <envVarFormat>html</envVarFormat>
-          <poolGroupString>${pool.group.string}</poolGroupString>
+          <poolGroupString>${poolGroupString}</poolGroupString>
           <tagExpressions>
             <tagExpression>
               <tag>client</tag>
@@ -383,7 +389,7 @@
       <plugin>
         <groupId>io.github.git-commit-id</groupId>
         <artifactId>git-commit-id-maven-plugin</artifactId>
-        <version>9.1.0</version>
+        <version>10.0.0</version>
         <executions>
           <execution>
             <id>get_git_infos</id>
@@ -403,7 +409,7 @@
       <plugin>
         <groupId>org.openapitools</groupId>
         <artifactId>openapi-generator-maven-plugin</artifactId>
-        <version>7.21.0</version>
+        <version>7.23.0</version>
         <executions>
           <execution>
             <goals>
@@ -462,7 +468,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>3.5.5</version>
+        <version>3.5.6</version>
         <configuration>
           <environmentVariables>
             <TIGER_TESTENV_CFGFILE>${tiger.config.file}</TIGER_TESTENV_CFGFILE>
@@ -485,7 +491,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.6.2</version>
+        <version>3.6.3</version>
         <executions>
           <execution>
             <id>enforce-no-vulnerable-snakeyaml</id>
