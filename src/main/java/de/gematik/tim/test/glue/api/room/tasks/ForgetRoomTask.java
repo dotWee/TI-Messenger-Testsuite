@@ -21,18 +21,10 @@
 package de.gematik.tim.test.glue.api.room.tasks;
 
 import static de.gematik.tim.test.glue.api.TestdriverApiEndpoint.FORGET_ROOM;
-import static de.gematik.tim.test.glue.api.devices.UseDeviceAbility.TEST_CASE_ID_HEADER;
-import static de.gematik.tim.test.glue.api.threading.ClientFactory.getClient;
-import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.getTestcaseId;
 import static net.serenitybdd.rest.SerenityRest.lastResponse;
 
-import de.gematik.tim.test.glue.api.exceptions.TestRunException;
 import de.gematik.tim.test.glue.api.room.UseRoomAbility;
-import lombok.SneakyThrows;
 import net.serenitybdd.screenplay.Actor;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.impl.client.CloseableHttpClient;
 
 public class ForgetRoomTask extends RoomSpecificTask {
 
@@ -51,23 +43,6 @@ public class ForgetRoomTask extends RoomSpecificTask {
     actor.attemptsTo(FORGET_ROOM.request());
     if (lastResponse().statusCode() == NO_CONTENT) {
       actor.abilityTo(UseRoomAbility.class).removeCurrent();
-    }
-  }
-
-  @Override
-  @SneakyThrows
-  public void runParallel() {
-    final CloseableHttpClient client = getClient();
-    final HttpDelete delete = new HttpDelete(FORGET_ROOM.getResolvedPath(actor));
-    delete.addHeader(TEST_CASE_ID_HEADER, getTestcaseId());
-    try (final CloseableHttpResponse response = client.execute(delete)) {
-      final int statusCode = response.getStatusLine().getStatusCode();
-      if (statusCode >= 200 && statusCode < 300) {
-        actor.abilityTo(UseRoomAbility.class).removeCurrent();
-      } else {
-        throw new TestRunException(
-            "Could not forget room, response code was %d".formatted(statusCode));
-      }
     }
   }
 }

@@ -62,7 +62,6 @@ public class TestcasePropertiesManager {
   private static List<Actor> failedTeardownActors;
   private static CopyOnWriteArrayList<Actor> activeActors;
   @Getter private static Scenario currentScenario;
-  @Getter private static boolean runningParallel;
 
   public static void createTestcaseId(TestCaseStarted testCaseStarted) {
     String testId =
@@ -217,10 +216,6 @@ public class TestcasePropertiesManager {
     return actors;
   }
 
-  public static void setParallelFlag(boolean status) {
-    runningParallel = status;
-  }
-
   private static void reset() {
     healthcareServices = new HashMap<>();
     endpoints = new HashMap<>();
@@ -228,6 +223,5 @@ public class TestcasePropertiesManager {
     messages = new HashMap<>();
     failedTeardownActors = new ArrayList<>();
     activeActors = new CopyOnWriteArrayList<>();
-    runningParallel = false;
   }
 }

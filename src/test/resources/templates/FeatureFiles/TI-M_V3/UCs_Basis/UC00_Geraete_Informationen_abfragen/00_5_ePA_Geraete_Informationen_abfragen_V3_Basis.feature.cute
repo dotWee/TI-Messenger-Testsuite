@@ -17,6 +17,7 @@ Funktionalität: 00 (5) Abfragen der Schnittstellen-Information und die Geräte-
   TF 2     Geräte-Liste
   TF 3     Matrix Version prüfen
   TF 4     Synapse Server Version abfragen
+  TF 5 - 7 Cleanup prüfen
 
   @Ctl:SchnittstellenDatenEpa
   @TCID:TIM_V3_ePA_AF_000501 @PRIO:1 @TESTFALL:Positiv @STATUS:Implementiert
@@ -66,4 +67,59 @@ Funktionalität: 00 (5) Abfragen der Schnittstellen-Information und die Geräte-
     @Filter(ApiName1.hasTag("epaClientV3"))
 
       Beispiele:
+      | ApiName1 |
+
+  @WIP
+  @Ctl:SchnittstellenDatenEpa
+  @TCID:TIM_V3_ePA_AF_000505 @PRIO:1 @TESTFALL:Positiv @STATUS:InBearbeitung
+  Szenariogrundriss: 00.05.05 Cleanup - ePA User verlässt den Raum nach Cleanup
+    Angenommen Es werden folgende Clients reserviert:
+      | A | PRO_CLIENT | <ApiName1> |
+      | B | EPA_CLIENT | <ApiName2> |
+    Und        "A","B" setzen den eigenen Authorization Mode auf "AllowAll"
+    Und        "A" erstellt einen Chat-Raum "TIM Testraum 1"
+    Und        "A" lädt "B" in Chat-Raum "TIM Testraum 1" ein
+    Und        "B" erhält eine Einladung in Raum "TIM Testraum 1" von "A"
+    Und        "B" bestätigt eine Einladung in Raum "TIM Testraum 1" von "A"
+    Und        "B" ist dem Raum "TIM Testraum 1" beigetreten
+    Wenn       "B" ein Cleanup ausführt
+    Dann       "A" bestätigt, dass "B" den Chat-Raum verlassen hat
+
+    @Shuffle(true)
+    @DistinctProperty(homeserver)
+    @AllowSelfCombine(false)
+    @AllowDoubleLineup(false)
+    @Filter(ApiName1.hasTag("proClientV3"))
+    @Filter(ApiName2.hasTag("epaClientV3"))
+
+    Beispiele:
+      | ApiName1 | ApiName2 |
+
+  @WIP
+  @Ctl:SchnittstellenDatenEpa
+  @TCID:TIM_V3_ePA_AF_000506 @PRIO:1 @TESTFALL:Negativ @STATUS:InBearbeitung
+  Szenariogrundriss: 00.05.06 Cleanup - ePA User ist nach Cleanup nicht mehr eingeloggt
+    Angenommen Es werden folgende Clients reserviert:
+      | A | EPA_CLIENT | <ApiName1> |
+    Und        "A" setzt den eigenen Authorization Mode auf "AllowAll"
+    Wenn       "A" ein Cleanup ausführt
+    Dann       prüfe, dass "A" ausgeloggt ist
+
+    @Filter(ApiName1.hasTag("epaClientV3"))
+
+    Beispiele:
+      | ApiName1 |
+
+  @WIP
+  @Ctl:SchnittstellenDatenEpa
+  @TCID:TIM_V3_ePA_AF_000507 @PRIO:1 @TESTFALL:Negativ @STATUS:InBearbeitung
+  Szenariogrundriss: 00.05.07 Cleanup - Device ist nach Cleanup nicht mehr für ePA User reserviert
+    Angenommen Es werden folgende Clients reserviert:
+      | A | EPA_CLIENT | <ApiName1> |
+    Wenn       "A" ein Cleanup ausführt
+    Dann       prüfe, dass KEIN Gerät mehr für "A" reserviert ist
+
+    @Filter(ApiName1.hasTag("epaClientV3"))
+
+    Beispiele:
       | ApiName1 |

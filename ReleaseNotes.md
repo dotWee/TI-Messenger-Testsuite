@@ -13,6 +13,50 @@
 [
 `docu Testset_V3.adoc`](https://github.com/gematik/TI-Messenger-Testsuite/tree/main/doc/userguide/Testset_V3.adoc)
 
+## Release 3.1.2
+
+### Known issues
+
+- The Tiger proxy does not close TCP connections on its server-facing side (proxy → backend). This will be fixed with in
+  Tiger with a future release. While this may lead to many open connections, it is unlikely, that it will completely
+  exhaust the available ports. All connections are closed at the end of the tests.
+  **Workaround:** Configure the backend server to close idle connections (e.g., set an idle timeout or disable HTTP
+  keep-alive).
+
+### Bugfixes
+
+- fixes typo in HttpClientConfig to properly set the http connection timeout
+
+### Changes
+
+- dependency updates:
+    - Bumps org.apache.maven.plugins:maven-surefire-plugin from 3.5.5 to 3.5.6.
+    - Bumps org.sonarsource.scanner.maven:sonar-maven-plugin from 5.5.0.6356 to 5.7.0.6970.
+    - Bumps org.apache.maven.plugins:maven-antrun-plugin from 3.1.0 to 3.2.0.
+    - Bumps com.nimbusds:nimbus-jose-jwt from 10.8 to 10.9.1.
+    - Bumps com.fasterxml.jackson.core:jackson-core from 2.21.2 to 2.22.0.
+    - Bumps org.projectlombok:lombok from 1.18.44 to 1.18.46.
+    - Bumps ch.qos.logback:logback-classic from 1.5.32 to 1.5.34.
+    - Bumps ch.qos.logback:logback-core from 1.5.32 to 1.5.34.
+    - Bumps io.github.git-commit-id:git-commit-id-maven-plugin from 9.1.0 to 10.0.0.
+    - Bumps org.openapitools:openapi-generator-maven-plugin from 7.21.0 to 7.23.0.
+    - Bumps org.apache.maven.plugins:maven-enforcer-plugin from 3.6.2 to 3.6.3.
+    - Bumps org.apache.maven.plugins:maven-failsafe-plugin from 3.5.5 to 3.5.6.
+- Command line property claimParallel was removed and parallel claiming is no longer supported, since it was not used
+  and caused confusion. The related tag @Ctl:NoParallel was removed from the test cases.
+- Command line property clearRoom was removed, since it is obsolete now that the cleanUp endpoint is mandatory
+- Command line property skipRoomStateCheck was removed, since it is no longer needed
+- Added VZD_FHIR_Directory AF 10036 to "UC08X_Eintraege_im_VZD-FHIR-Directory_suchen" (Basis) feature files
+
+  Thanks to dotWee:
+- Switched to maven-antrun-plugin for Serenity report copying, enabling platform-independent report archiving.
+
+### Features
+
+- Adds sample Serenity report for V3, which can be found in the
+  folder: [serenityReportExample](./serenityReportExample/). Find more information at [
+  `GettingStarted`](https://github.com/gematik/TI-Messenger-Testsuite/blob/main/doc/userguide/GettingStarted.adoc#evaluating-the-test-results)
+
 ## Release 3.1.1
 
 ### Known issues

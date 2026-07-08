@@ -21,8 +21,7 @@
     <tiger.config.file>tiger.yml</tiger.config.file>
     <sonar.sources>${project.basedir}</sonar.sources>
     <sonar.exclusions>
-      serenityReportExample/**, target11x/**, targetV2part1/**, targetV2part2/**, targetV3basis1/**, targetV3basis2/**,
-      targetV3proEpa/**
+      serenityReportExample/**, target11x/**, targetV2part1/**, targetV2part2/**, targetV3delta1/**, targetV3delta2/**
     </sonar.exclusions>
     <sonar.coverage.exclusions>**/*</sonar.coverage.exclusions>
   </properties>
@@ -32,12 +31,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.5</version>
+        <version>3.5.6</version>
       </plugin>
       <plugin>
         <artifactId>sonar-maven-plugin</artifactId>
         <groupId>org.sonarsource.scanner.maven</groupId>
-        <version>5.5.0.6356</version>
+        <version>5.7.0.6970</version>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -257,7 +256,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>${maven-antrun-plugin.version}</version>
         <configuration>
           <skip>${skip.saving.reports}</skip>
         </configuration>
@@ -270,6 +269,7 @@
             </goals>
             <configuration>
               <target>
+                <!--suppress UnresolvedMavenProperty -->
                 <copy todir="${basedir}/reports/${build.time}/report/" preservelastmodified="true">
                   <fileset dir="${project.build.directory}/site/serenity"/>
                 </copy>

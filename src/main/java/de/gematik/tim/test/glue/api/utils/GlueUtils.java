@@ -28,12 +28,10 @@ import static de.gematik.tim.test.glue.api.ActorMemoryKeys.MX_ID;
 import static de.gematik.tim.test.glue.api.ActorMemoryKeys.OWN_ROOM_MEMBERSHIP_STATUS_POSTFIX;
 import static de.gematik.tim.test.glue.api.room.questions.GetRoomQuestion.ownRoom;
 import static de.gematik.tim.test.glue.api.room.questions.GetRoomsQuestion.ownRooms;
-import static de.gematik.tim.test.glue.api.utils.IndividualLogger.individualLog;
 import static de.gematik.tim.test.glue.api.utils.RequestResponseUtils.parseResponse;
 import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.getAllActiveActors;
 import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.getEndpointFromInternalName;
 import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.getRoomByInternalName;
-import static de.gematik.tim.test.glue.api.utils.TestsuiteInitializer.CHECK_ROOM_STATE_FAIL;
 import static de.gematik.tim.test.models.FhirResourceTypeDTO.ENDPOINT;
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
@@ -382,7 +380,7 @@ public class GlueUtils {
                   actor.recall(room.getRoomId() + OWN_ROOM_MEMBERSHIP_STATUS_POSTFIX);
               String mxid = actor.recall(MX_ID);
               if (!room.getMembers().stream().map(RoomMemberDTO::getMxid).toList().contains(mxid)) {
-                handleRoomStateInconsistency(
+                throw new AssertionFailed(
                     format("%s expected to be in room <%s>", actor.getName(), room.getName()));
               }
               boolean membershipStatusCorrect =
@@ -393,7 +391,7 @@ public class GlueUtils {
                       .orElseThrow()
                       .equals(status);
               if (!membershipStatusCorrect) {
-                handleRoomStateInconsistency(
+                throw new AssertionFailed(
                     format(
                         "%s should have membership-status <%s> in room <%s>",
                         actor.getName(), status, room.getName()));
@@ -421,7 +419,7 @@ public class GlueUtils {
                   actorForMember.recall(room.getRoomId() + OWN_ROOM_MEMBERSHIP_STATUS_POSTFIX);
 
               if (!member.getMembershipState().equals(status)) {
-                handleRoomStateInconsistency(
+                throw new AssertionFailed(
                     format(
                         "%s should have membership-status <%s> in room <%s>, but <%s> was found",
                         actorForMember.getName(),
@@ -430,13 +428,6 @@ public class GlueUtils {
                         member.getMembershipState()));
               }
             });
-  }
-
-  private static void handleRoomStateInconsistency(String msg) {
-    if (!CHECK_ROOM_STATE_FAIL) {
-      throw new AssertionFailed(msg);
-    }
-    individualLog(msg);
   }
 
   @ParameterType(value = "(?:.*)", preferForRegexMatch = true)

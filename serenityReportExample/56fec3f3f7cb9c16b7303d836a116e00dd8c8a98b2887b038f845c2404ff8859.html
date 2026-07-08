@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Serenity Reports</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<link rel="apple-touch-icon" sizes="57x57" href="apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="bootstrap-icons/bootstrap-icons.css">
+<!-- JQuery -->
+<script type="text/javascript" src="scripts/jquery-3.7.1.min.js"></script><!-- Required Stylesheets -->
+<link href="bootstrap-treeview/dist/bootstrap-treeview.min.css" rel="stylesheet">
+
+<!-- Required Javascript -->
+<script src="bootstrap-treeview/dist/bootstrap-treeview.min.js"></script><!-- DataTables -->
+<link type="text/css" href="datatables/1.13.1/datatables.min.css" rel="stylesheet" />
+<script type="text/javascript" src="datatables/1.13.1/datatables.min.js"></script>
+<script type="text/javascript" src="datatables/1.13.1/time-elapsed-dhms.js"></script>
+
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<script src="bootstrap/js/bootstrap.min.js"></script>
+
+
+<script>
+    jQuery.fn.dataTable.ext.type.order['time-elapsed-dhms-pre'] = function(data) {
+
+        var matches = data.match(/^(\d+(?:\.\d+)?)\s*([a-z]+)/i);
+        var multipliers = {
+            ms: 1,
+            s: 1000,
+            m: 60000,
+            h: 3600000,
+            d: 86400000
+        };
+
+        if (matches) {
+            var multiplier = multipliers[matches[2].toLowerCase()];
+            return parseFloat(matches[1]) * multiplier;
+        } else {
+            return -1;
+        };
+    };
+</script>
+<link rel="stylesheet" href="css/core.css"/>
+<link rel="stylesheet" href="css/link.css"/>
+<link type="text/css" media="screen" href="css/screen.css" rel="Stylesheet"/>
+<!--CHART.JS-->
+<script src="chartjs/chart.js"></script>
+<script src="chartjs/chartjs-plugin-datalabels@2.0.0.min.js"></script>
+<script src="chartjs/patternomaly.min.js"></script>
+<script>
+    // Register the plugin to all charts:
+    Chart.register(ChartDataLabels);
+</script>
+<!-- JQuery-UI -->
+<link type="text/css" href="jqueryui/1.13.2/jquery-ui.css" rel="Stylesheet" />
+<script type="text/javascript" src="jqueryui/1.13.2/jquery-ui.js"></script><!-- DataTables -->
+<link type="text/css" href="datatables/1.13.1/datatables.min.css" rel="stylesheet" />
+<script type="text/javascript" src="datatables/1.13.1/datatables.min.js"></script>
+<script type="text/javascript" src="datatables/1.13.1/time-elapsed-dhms.js"></script>
+
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<script src="bootstrap/js/bootstrap.min.js"></script>
+
+
+<script>
+    jQuery.fn.dataTable.ext.type.order['time-elapsed-dhms-pre'] = function(data) {
+
+        var matches = data.match(/^(\d+(?:\.\d+)?)\s*([a-z]+)/i);
+        var multipliers = {
+            ms: 1,
+            s: 1000,
+            m: 60000,
+            h: 3600000,
+            d: 86400000
+        };
+
+        if (matches) {
+            var multiplier = multipliers[matches[2].toLowerCase()];
+            return parseFloat(matches[1]) * multiplier;
+        } else {
+            return -1;
+        };
+    };
+</script>
+
+
+
+    <script class="code" type="text/javascript">$(document).ready(function () {
+
+
+            $("#scenario-results").DataTable({
+                "order": [[0, "asc",], [3, "asc",]],
+                "language": {
+                    searchPlaceholder: "Filter",
+                    search: ""
+                },
+                columnDefs: [
+                    {type: 'time-elapsed-dhms', targets: 4}
+                ]
+            })
+            $("#manual-scenario-results").DataTable({
+                "order": [[0, "asc",], [1, "asc",]],
+                "language": {
+                    searchPlaceholder: "Filter",
+                    search: ""
+                },
+            })
+
+        // Results table
+        $('#test-results-table').DataTable({
+            "order": [[0, "asc",], [3, "asc",]],
+            "pageLength": 100,
+            "lengthMenu": [[25, 50, 100, 200, -1], [25, 50, 100, 200, "All"]]
+        });
+
+    })
+    ;
+    </script>
+</head>
+
+<body class="results-page">
+<div id="topheader">
+    <div id="topbanner">
+        <div id="logo"><a href="index.html"><img src="images/serenity-logo.png" border="0"/></a></div>
+        <div id="projectname-banner" style="float:right">
+            <span class="projectname">
+                <span class="projecttitle">Serenity BDD Report</span>
+                <span class="projectsubtitle"></span>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="middlecontent">
+
+
+    <div id="contenttop">
+        <div class="middlebg">
+        <span class="breadcrumbs"><a href="index.html">Home</a>
+                > File 
+                > <span
+                    class="truncate-60">Featurefile 17X 01 V3 Basis > Duration 1 To 2 Minutes</span>
+        </span>
+        </div>
+        <div class="rightbg"></div>
+    </div>
+
+    <div class="clr"></div>
+    <!--/* starts second table*/-->
+<div>
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#"><i class="bi bi-journal-check"></i> Overall Test Results</a>
+        </li>
+        <li >
+            <a href="capabilities.html"><i class="bi bi-journal-text"></i> Requirements</a>
+        </li>
+    </ul>
+    <span class="date-and-time"><a href="build-info.html"><i class="bi bi-info-circle"></i></a> Report generated 22-06-2026 00:47:55</span>
+    <br style="clear:left"/>
+</div>
+    <div class="clr"></div>
+    <div id="beforetable"></div>
+    <div id="results-dashboard">
+        <div class="middlb">
+            <div class="table">
+
+                <h2><i class='bi bi-tags'></i> File: Featurefile 17X 01 V3 Basis > Duration 1 To 2 Minutes</h2>
+                <table class='overview'>
+                    <tr>
+                        <td width="375px" valign="top">
+                            <div class="test-count-summary">
+                                <div>
+
+                                    8 tests
+
+                                     |
+                                        <a href="3c7254ee13025bd941f15ce4452d679f2e91e4ef6d7544ffd605a8f64fbba7ce.csv" title="Download CSV"> <i class="bi bi-cloud-arrow-down" title="Download CSV"></i></a>
+
+                                    <p class="report-info"><i class="bi bi-info-circle"></i> Note that results include
+                                        data-driven scenarios containing tests ,
+                                        which may also contain results other than tests .</p>
+
+
+
+                                </div>
+                            </div>
+
+                            <div>
+                                <ul class="nav nav-tabs">
+                                    <li class="active">
+                                        <a data-toggle="tab" href="#summary"><i class="bi bi-house-door"></i> Summary</a>
+                                    </li>
+                                    <li>
+                                        <a data-toggle="tab" href="#tests"><i class="bi bi-speedometer"></i> Test
+                                            Results</a>
+                                    </li>
+                                </ul>
+
+                                <div class="card border">
+                                    <div class="tab-content" id="pills-tabContent">
+                                        <div id="summary" class="tab-pane fade in active">
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+    <div>
+        <h3><i class="bi bi-speedometer2"></i> Key Statistics</h3>
+        <div>
+            <table class="table table-striped table-hover">
+                <tbody>
+                <tr scope="row">
+                    <td>
+                        <i class="bi bi-card-checklist"></i> Number of Scenarios
+                    </td>
+                    <td>8</td>
+                </tr>
+                <tr scope="row">
+                    <td>
+                        <i class="bi bi-caret-right"></i> Total Number of Test Cases
+                    </td>
+                    <td>8</td>
+                </tr>
+                <tr scope="row">
+                    <td>
+                        <i class="bi bi-flag-fill"></i> Tests Started
+                    </td>
+                    <td>Jun 21, 2026 19:33:42</td>
+                </tr>
+                <tr scope="row">
+                    <td>
+                        <i class="bi bi-stop-circle"></i> Tests
+                        Finished
+                    </td>
+                    <td>Jun 21, 2026 19:44:42</td>
+                </tr>
+                <tr scope="row">
+                    <td>
+                        <i class="bi bi-stopwatch"></i> Total
+                        Duration
+                    </td>
+                    <td> 11m 0s</td>
+                </tr>
+                <tr scope="row">
+                    <td>
+                        <i class="bi bi-trophy"></i> Fastest Test
+                    </td>
+                    <td> 1m 10s</td>
+                </tr>
+                <tr scope="row">
+                    <td>
+                        <i class="bi bi-skip-start"></i> Slowest
+                        Test
+                    </td>
+                    <td> 1m 33s</td>
+                </tr>
+                <tr scope="row">
+                    <td>
+                        <i class="bi bi-stopwatch"></i> Average
+                        Execution Time
+                    </td>
+                    <td> 1m 22s</td>
+                </tr>
+                <tr scope="row">
+                    <td>
+                        <i class="bi bi-stopwatch-fill"></i> Total
+                        Execution Time
+                    </td>
+                    <td> 11m 0s</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <h4><i class="bi bi-check-square"></i> Test Outcomes</h4>
+                                                        <!-- Severity bar chart -->
+                                                        <div class="chart-container" style="position: relative; width:30vw">
+                                                            <canvas id="severityChart" width="300" height="300"></canvas>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-sm-4">
+                                                        <h4><i class="bi bi-graph-up"></i> Test Performance</h4>
+
+                                                        <!-- Duration bar chart -->
+                                                        <div class="chart-container" style="position: relative; width:30vw">
+                                                            <canvas id="durationChart" width="300" height="300"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <h3>Tags</h3>
+
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                            <h5 class="card-title">AFO-ID</h5>
+                                                                        <div>
+                                                                                <a href="4f7fd1de6f6e365af996eb948d5c38e98f4ce91f4cdda4031769bc140e266cc2.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> A 28342&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="4f1c1a0b86f788ff322177c22a7ea66451954011652176c9dcf1643a831fc4a4.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> A 28343&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                            <h5 class="card-title">Ctl</h5>
+                                                                        <div>
+                                                                                <a href="c1794236da437eddb36b376a0a68bf5d39e1536eaf241613d4c39df244c9c7e0.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> UseCaseV3 17X Basis&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="d0b32cf5c2573baf79c3489637157238d8bdb5da84eec2db1357506a1e11c1fb.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Allow All&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                            <h5 class="card-title">Delta V3</h5>
+                                                                        <div>
+                                                                                <a href="999db565711b3e666ca9491ac06b58318783f956d5648d3aea354110a1a6e8fd.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Pro Kk&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="1068d1d6cd2dd042c76110184dca97bfdc7f32434f37ae6fa4deb1f196b92caa.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Pro&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                            <h5 class="card-title">File</h5>
+                                                                        <div>
+                                                                                <a href="255c2eed19c7982ac45244a3352f8069673e44c29861735da1b58727c8162c8f.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Featurefile 17X 01 V3 Basis&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                            <h5 class="card-title">Prio</h5>
+                                                                        <div>
+                                                                                <a href="7748df88f2c56a8cb6f2fb2e9c999c5782b6158037eec2da2975d7b7a25436d8.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> 1&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                            <h5 class="card-title">Produkt</h5>
+                                                                        <div>
+                                                                                <a href="77e3e49441a15427e6dfa1d7c22dfb483bf88791320a2d3fa6dfb87cd322cf71.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> TI-M Client Basis&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="f7ec57d495a4882eb70ab1bf9636e653a9800e0f0c080dfc217938ad7721c248.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> TI-M FD Basis&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                            <h5 class="card-title">Plugin</h5>
+                                                                        <div>
+                                                                                <a href="20e540f9e8ee842698bff859493ae5071fe3897d3993c5a2530710fc430f25cd.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Allowselfcombine(False)&nbsp;&nbsp;&nbsp;4
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="ddd49abc69bf2941339cd201717647fb3a50a523de63f5ccd0a875e436007755.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Filter(Apiname1.hastag("proclientv3"))&nbsp;&nbsp;&nbsp;4
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="cea0662e593d38d0c0c9bbf5bf6f909bd8675564b41e1e5fd459bbb52bee6c08.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Distinctproperty(Homeserver)&nbsp;&nbsp;&nbsp;4
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="73ea2ce9c82b87a4fbf589be6b38ee9e467c2366b9d4ed262d69961e384bb97a.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Filter(ApiName1B.hastag("proclientv3"))&nbsp;&nbsp;&nbsp;4
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="045d390b85b61c0375fc56b7d71e640ab460d9defd6b39290708a73426934e51.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Shuffle(True)&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="04794a5ed960fc5e469a40bd2b884fa31e50607bbf1941403bbe56008edf5d83.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Allowdoublelineup(False)&nbsp;&nbsp;&nbsp;4
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="56eb436ba9f6da4b21467167e90d02eaff7e28de8d8281bef5b2a5383ddc6d6f.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Filter(ApiName1A.hastag("proclientv3"))&nbsp;&nbsp;&nbsp;4
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="b2f613cdbefc483032dd6ec7ad6fdefc645986994fa6c057762077fd12957f22.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Filter(Apiname2.hastag("proclientv3"))&nbsp;&nbsp;&nbsp;4
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="19beb0144b3a38e9d778fca7596fe5da635d6cce390659672a0abbfa06374401.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Allowselfcombine(True)&nbsp;&nbsp;&nbsp;4
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="ba02700b5b885dfc80d54b77f2cb3697b09ce4e092f9914a9a74895cfcf93fa8.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Allowdoublelineup(True)&nbsp;&nbsp;&nbsp;4
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="fa8963e64f67ab2303c1a4c5678e612ac776c31c4b8a6d04bf3c3976a18cdade.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Equalproperty(Homeserver)&nbsp;&nbsp;&nbsp;4
+                                                                                    </span>
+                                                                                </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                            <h5 class="card-title">Status</h5>
+                                                                        <div>
+                                                                                <a href="16b36824af0423c8594aa55c340a5be9a21ff049608858e50f41700f9f05ac68.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Implementiert&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                            <h5 class="card-title">Tcid</h5>
+                                                                        <div>
+                                                                                <a href="2f039f33aa38794f167dc0f10e4733223f8c7b42e7e9c66db560720fcd29f90d.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> TIM V3 BASIS AF 17X0107&nbsp;&nbsp;&nbsp;1
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="65d627f1bbee475ab6184570ec6976a5962820c18e14c0230d6e7e817d85b666.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> TIM V3 BASIS AF 17X0101&nbsp;&nbsp;&nbsp;1
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="a191bb7cb2b293084624040174426e6b55143a5b3b5ff40fd26ed835a3417581.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> TIM V3 BASIS AF 17X0103&nbsp;&nbsp;&nbsp;1
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="6a5ed1e4b3d8dd58de2391bba88e6bde89f96eed0aada799c61c7179926199a1.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> TIM V3 BASIS AF 17X0105&nbsp;&nbsp;&nbsp;1
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="a1f1eb6d34eea2f45d41359425078721c0610268d5bfb41e0fefd3471205cdd3.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> TIM V3 BASIS AF 17X0106&nbsp;&nbsp;&nbsp;1
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="4c9ec7d83dbd671d9578ae49bff2a84862a61822624f19ae693277723d3eed92.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> TIM V3 BASIS AF 17X0108&nbsp;&nbsp;&nbsp;1
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="d7123894ccc1aa008ca4904ec948e9273945f1df099406b6ee4029323463b4e7.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> TIM V3 BASIS AF 17X0102&nbsp;&nbsp;&nbsp;1
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="08153f7ed452ce501e11f8fa8e3a03f9e6d0f34589dea88c3e1ee70928824d00.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> TIM V3 BASIS AF 17X0104&nbsp;&nbsp;&nbsp;1
+                                                                                    </span>
+                                                                                </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                            <h5 class="card-title">Testfall</h5>
+                                                                        <div>
+                                                                                <a href="b4cbf857506990c596fb50faff38a3afd018e4657602837e3869c8ea75d140e1.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Positiv&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                            <h5 class="card-title">Zul V3</h5>
+                                                                        <div>
+                                                                                <a href="9648ae06922b79ce73ae7e5ca7e2da988a512bdeebe2134af892b1a5fff4adac.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Pro&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                                <a href="a7ef9f0338a35406205d77d07921b46be8b234f61f7406e23434757f00e78469.html">
+                                                                                    <span class="badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                                                                        <i class="bi bi-tag"></i> Pro Kk&nbsp;&nbsp;&nbsp;8
+                                                                                    </span>
+                                                                                </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                        </div>
+                                                    </div>
+                                            </div>
+
+                                            <div class="container-fluid">
+
+                                            </div>
+                                            <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3>Tags</h3>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">AFO-ID</h5>
+                            <div>
+                                    <a href="4f7fd1de6f6e365af996eb948d5c38e98f4ce91f4cdda4031769bc140e266cc2.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> A 28342&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                                    <a href="4f1c1a0b86f788ff322177c22a7ea66451954011652176c9dcf1643a831fc4a4.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> A 28343&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Ctl</h5>
+                            <div>
+                                    <a href="c1794236da437eddb36b376a0a68bf5d39e1536eaf241613d4c39df244c9c7e0.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> UseCaseV3 17X Basis&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                                    <a href="d0b32cf5c2573baf79c3489637157238d8bdb5da84eec2db1357506a1e11c1fb.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Allow All&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Delta V3</h5>
+                            <div>
+                                    <a href="999db565711b3e666ca9491ac06b58318783f956d5648d3aea354110a1a6e8fd.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Pro Kk&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                                    <a href="1068d1d6cd2dd042c76110184dca97bfdc7f32434f37ae6fa4deb1f196b92caa.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Pro&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">File</h5>
+                            <div>
+                                    <a href="255c2eed19c7982ac45244a3352f8069673e44c29861735da1b58727c8162c8f.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Featurefile 17X 01 V3 Basis&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Prio</h5>
+                            <div>
+                                    <a href="7748df88f2c56a8cb6f2fb2e9c999c5782b6158037eec2da2975d7b7a25436d8.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> 1&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Produkt</h5>
+                            <div>
+                                    <a href="77e3e49441a15427e6dfa1d7c22dfb483bf88791320a2d3fa6dfb87cd322cf71.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TI-M Client Basis&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                                    <a href="f7ec57d495a4882eb70ab1bf9636e653a9800e0f0c080dfc217938ad7721c248.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TI-M FD Basis&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Plugin</h5>
+                            <div>
+                                    <a href="20e540f9e8ee842698bff859493ae5071fe3897d3993c5a2530710fc430f25cd.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Allowselfcombine(False)&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="ddd49abc69bf2941339cd201717647fb3a50a523de63f5ccd0a875e436007755.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Filter(Apiname1.hastag("proclientv3"))&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="cea0662e593d38d0c0c9bbf5bf6f909bd8675564b41e1e5fd459bbb52bee6c08.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Distinctproperty(Homeserver)&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="73ea2ce9c82b87a4fbf589be6b38ee9e467c2366b9d4ed262d69961e384bb97a.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Filter(ApiName1B.hastag("proclientv3"))&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="045d390b85b61c0375fc56b7d71e640ab460d9defd6b39290708a73426934e51.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Shuffle(True)&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                                    <a href="04794a5ed960fc5e469a40bd2b884fa31e50607bbf1941403bbe56008edf5d83.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Allowdoublelineup(False)&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="56eb436ba9f6da4b21467167e90d02eaff7e28de8d8281bef5b2a5383ddc6d6f.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Filter(ApiName1A.hastag("proclientv3"))&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="b2f613cdbefc483032dd6ec7ad6fdefc645986994fa6c057762077fd12957f22.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Filter(Apiname2.hastag("proclientv3"))&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="19beb0144b3a38e9d778fca7596fe5da635d6cce390659672a0abbfa06374401.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Allowselfcombine(True)&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="ba02700b5b885dfc80d54b77f2cb3697b09ce4e092f9914a9a74895cfcf93fa8.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Allowdoublelineup(True)&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="fa8963e64f67ab2303c1a4c5678e612ac776c31c4b8a6d04bf3c3976a18cdade.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Equalproperty(Homeserver)&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Status</h5>
+                            <div>
+                                    <a href="16b36824af0423c8594aa55c340a5be9a21ff049608858e50f41700f9f05ac68.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Implementiert&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Tcid</h5>
+                            <div>
+                                    <a href="2f039f33aa38794f167dc0f10e4733223f8c7b42e7e9c66db560720fcd29f90d.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0107&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                                    <a href="65d627f1bbee475ab6184570ec6976a5962820c18e14c0230d6e7e817d85b666.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0101&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                                    <a href="a191bb7cb2b293084624040174426e6b55143a5b3b5ff40fd26ed835a3417581.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0103&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                                    <a href="6a5ed1e4b3d8dd58de2391bba88e6bde89f96eed0aada799c61c7179926199a1.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0105&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                                    <a href="a1f1eb6d34eea2f45d41359425078721c0610268d5bfb41e0fefd3471205cdd3.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0106&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                                    <a href="4c9ec7d83dbd671d9578ae49bff2a84862a61822624f19ae693277723d3eed92.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0108&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                                    <a href="d7123894ccc1aa008ca4904ec948e9273945f1df099406b6ee4029323463b4e7.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0102&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                                    <a href="08153f7ed452ce501e11f8fa8e3a03f9e6d0f34589dea88c3e1ee70928824d00.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0104&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Testfall</h5>
+                            <div>
+                                    <a href="b4cbf857506990c596fb50faff38a3afd018e4657602837e3869c8ea75d140e1.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Positiv&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Zul V3</h5>
+                            <div>
+                                    <a href="9648ae06922b79ce73ae7e5ca7e2da988a512bdeebe2134af892b1a5fff4adac.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Pro&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                                    <a href="a7ef9f0338a35406205d77d07921b46be8b234f61f7406e23434757f00e78469.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Pro Kk&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+                                            </div>
+                                        </div>
+                                        <div id="tests" class="tab-pane fade in">
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <h3><i class="bi bi-gear"></i> Automated Tests</h3>
+
+                                            <table class="scenario-result-table table" id="scenario-results">
+                                                <thead>
+                                                <tr>
+                                                    <th>Feature</th>
+                                                    <th class="test-name-column">Scenario</th>
+                                                    <th>Steps</th>
+                                                    <th>Started</th>
+                                                    <th>Total Duration</th>
+                                                    <th>Result</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                            <tr class="scenario-result SUCCESS">
+                                                                <td>
+                                                                        <a href="#">17X. (1) Verlassen und Vergessen von Räumen (Basis Spec) [V3]</a>
+                                                                </td>
+                                                                <td>
+                                                                    <i class="bi bi-table" title="Data Driven Scenario"></i>
+                                                                    <a href="d4fd2a99450c5da3316af7f87406dfeb90c9ef06b4487d7c8956433b453a5486.html">1: 17X.01.01 Verlassen und Vergessen von Räumen - Chat - User verlässt Chat (gleicher HomeServer) </a>
+                                                                        <br/>ApiName1A=RU2-Ref-Pract-SDK-HS4, ApiName1B=RU2-Ref-Pract-SDK-HS4
+                                                                </td>
+                                                                <td>23</td>
+                                                                <td>19:33:42</td>
+                                                                <td>1m 19s</td>
+                                                                <td><a href='##beforetable'><i class='bi bi-check-circle-fill success-icon ' title='SUCCESS'></i></a> <span style="display:none">SUCCESS</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr class="scenario-result SUCCESS">
+                                                                <td>
+                                                                        <a href="#">17X. (1) Verlassen und Vergessen von Räumen (Basis Spec) [V3]</a>
+                                                                </td>
+                                                                <td>
+                                                                    <i class="bi bi-table" title="Data Driven Scenario"></i>
+                                                                    <a href="9c63d50439de9b13cec3b0d71cbd2186ade6bef3a594589df7db55b974ec01d3.html">1: 17X.01.02 Verlassen und Vergessen von Räumen - Raum - User verlässt Raum (gleicher HomeServer) </a>
+                                                                        <br/>ApiName1A=RU2-Ref-Pract-SDK-HS4, ApiName1B=RU2-Ref-Pract-SDK-HS4
+                                                                </td>
+                                                                <td>25</td>
+                                                                <td>19:35:01</td>
+                                                                <td>1m 31s</td>
+                                                                <td><a href='##beforetable'><i class='bi bi-check-circle-fill success-icon ' title='SUCCESS'></i></a> <span style="display:none">SUCCESS</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr class="scenario-result SUCCESS">
+                                                                <td>
+                                                                        <a href="#">17X. (1) Verlassen und Vergessen von Räumen (Basis Spec) [V3]</a>
+                                                                </td>
+                                                                <td>
+                                                                    <i class="bi bi-table" title="Data Driven Scenario"></i>
+                                                                    <a href="a98b8dc3b4ed11f5db9b1cf1635875e3ac1fc62787c9299c0d69db2a21f5c7fe.html">1: 17X.01.03 Verlassen und Vergessen von Räumen - Chat - User verlässt Chat (unterschiedlicher HomeServer) </a>
+                                                                        <br/>ApiName1=RU2-Ref-Pract-SDK-HS4, ApiName2=RU2-Ref-Pract-SDK-HS3
+                                                                </td>
+                                                                <td>23</td>
+                                                                <td>19:36:32</td>
+                                                                <td>1m 22s</td>
+                                                                <td><a href='##beforetable'><i class='bi bi-check-circle-fill success-icon ' title='SUCCESS'></i></a> <span style="display:none">SUCCESS</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr class="scenario-result SUCCESS">
+                                                                <td>
+                                                                        <a href="#">17X. (1) Verlassen und Vergessen von Räumen (Basis Spec) [V3]</a>
+                                                                </td>
+                                                                <td>
+                                                                    <i class="bi bi-table" title="Data Driven Scenario"></i>
+                                                                    <a href="eb5c24cfc2b5d7eded4225aa1889d857b081beef7f26c1f5385c6ec1bf8a45ce.html">1: 17X.01.04 Verlassen und Vergessen von Räumen - Raum - User verlässt Raum (unterschiedlicher HomeServer) </a>
+                                                                        <br/>ApiName1=RU2-Ref-Pract-SDK-HS3, ApiName2=RU2-Ref-Pract-SDK-HS4
+                                                                </td>
+                                                                <td>25</td>
+                                                                <td>19:37:55</td>
+                                                                <td>1m 33s</td>
+                                                                <td><a href='##beforetable'><i class='bi bi-check-circle-fill success-icon ' title='SUCCESS'></i></a> <span style="display:none">SUCCESS</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr class="scenario-result SUCCESS">
+                                                                <td>
+                                                                        <a href="#">17X. (1) Verlassen und Vergessen von Räumen (Basis Spec) [V3]</a>
+                                                                </td>
+                                                                <td>
+                                                                    <i class="bi bi-table" title="Data Driven Scenario"></i>
+                                                                    <a href="23081d3f331486eb9c46c5231ac31d8513895270438191b24dcc5b11fe177d65.html">1: 17X.01.05 Verlassen und Vergessen von Räumen - Chat - User löscht/vergisst Chat (gleicher HomeServer) </a>
+                                                                        <br/>ApiName1A=RU2-Ref-Pract-SDK-HS3, ApiName1B=RU2-Ref-Pract-SDK-HS3
+                                                                </td>
+                                                                <td>16</td>
+                                                                <td>19:39:28</td>
+                                                                <td>1m 11s</td>
+                                                                <td><a href='##beforetable'><i class='bi bi-check-circle-fill success-icon ' title='SUCCESS'></i></a> <span style="display:none">SUCCESS</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr class="scenario-result SUCCESS">
+                                                                <td>
+                                                                        <a href="#">17X. (1) Verlassen und Vergessen von Räumen (Basis Spec) [V3]</a>
+                                                                </td>
+                                                                <td>
+                                                                    <i class="bi bi-table" title="Data Driven Scenario"></i>
+                                                                    <a href="05b933d4678a7ef1c439c33670def92be8c01d9822c9620ffd505a98951cf53b.html">1: 17X.01.06 Verlassen und Vergessen von Räumen - Raum - User löscht/vergisst Raum (gleicher HomeServer) </a>
+                                                                        <br/>ApiName1A=RU2-Ref-Pract-SDK-HS3, ApiName1B=RU2-Ref-Pract-SDK-HS3
+                                                                </td>
+                                                                <td>18</td>
+                                                                <td>19:40:39</td>
+                                                                <td>1m 22s</td>
+                                                                <td><a href='##beforetable'><i class='bi bi-check-circle-fill success-icon ' title='SUCCESS'></i></a> <span style="display:none">SUCCESS</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr class="scenario-result SUCCESS">
+                                                                <td>
+                                                                        <a href="#">17X. (1) Verlassen und Vergessen von Räumen (Basis Spec) [V3]</a>
+                                                                </td>
+                                                                <td>
+                                                                    <i class="bi bi-table" title="Data Driven Scenario"></i>
+                                                                    <a href="ca35be1eacddd879377a136d9498607fbb3c6d09e2dc2254fd6015913718deeb.html">1: 17X.01.07 Verlassen und Vergessen von Räumen - Chat - User löscht/vergisst Chat (unterschiedlicher HomeServer) </a>
+                                                                        <br/>ApiName1=RU2-Ref-Pract-SDK-HS4, ApiName2=RU2-Ref-Pract-SDK-HS3
+                                                                </td>
+                                                                <td>16</td>
+                                                                <td>19:42:01</td>
+                                                                <td>1m 15s</td>
+                                                                <td><a href='##beforetable'><i class='bi bi-check-circle-fill success-icon ' title='SUCCESS'></i></a> <span style="display:none">SUCCESS</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr class="scenario-result SUCCESS">
+                                                                <td>
+                                                                        <a href="#">17X. (1) Verlassen und Vergessen von Räumen (Basis Spec) [V3]</a>
+                                                                </td>
+                                                                <td>
+                                                                    <i class="bi bi-table" title="Data Driven Scenario"></i>
+                                                                    <a href="6cf581ae5fbcfd0d78f47c1ab46ac6641c0e428b2ebcfb1668fb637675b3a227.html">1: 17X.01.08 Verlassen und Vergessen von Räumen - Raum - User löscht/vergisst Raum (unterschiedlicher HomeServer) </a>
+                                                                        <br/>ApiName1=RU2-Ref-Pract-SDK-HS4, ApiName2=RU2-Ref-Pract-SDK-HS3
+                                                                </td>
+                                                                <td>18</td>
+                                                                <td>19:43:16</td>
+                                                                <td>1m 26s</td>
+                                                                <td><a href='##beforetable'><i class='bi bi-check-circle-fill success-icon ' title='SUCCESS'></i></a> <span style="display:none">SUCCESS</span>
+                                                                </td>
+                                                            </tr>
+                                                </tbody>
+                                            </table>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <h3><i class="bi bi-hand-index-thumb"></i> Manual Tests</h3>
+
+                                                No manual tests were recorded
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3>Tags</h3>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">AFO-ID</h5>
+                            <div>
+                                    <a href="4f7fd1de6f6e365af996eb948d5c38e98f4ce91f4cdda4031769bc140e266cc2.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> A 28342&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                                    <a href="4f1c1a0b86f788ff322177c22a7ea66451954011652176c9dcf1643a831fc4a4.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> A 28343&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Ctl</h5>
+                            <div>
+                                    <a href="c1794236da437eddb36b376a0a68bf5d39e1536eaf241613d4c39df244c9c7e0.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> UseCaseV3 17X Basis&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                                    <a href="d0b32cf5c2573baf79c3489637157238d8bdb5da84eec2db1357506a1e11c1fb.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Allow All&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Delta V3</h5>
+                            <div>
+                                    <a href="999db565711b3e666ca9491ac06b58318783f956d5648d3aea354110a1a6e8fd.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Pro Kk&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                                    <a href="1068d1d6cd2dd042c76110184dca97bfdc7f32434f37ae6fa4deb1f196b92caa.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Pro&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">File</h5>
+                            <div>
+                                    <a href="255c2eed19c7982ac45244a3352f8069673e44c29861735da1b58727c8162c8f.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Featurefile 17X 01 V3 Basis&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Prio</h5>
+                            <div>
+                                    <a href="7748df88f2c56a8cb6f2fb2e9c999c5782b6158037eec2da2975d7b7a25436d8.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> 1&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Produkt</h5>
+                            <div>
+                                    <a href="77e3e49441a15427e6dfa1d7c22dfb483bf88791320a2d3fa6dfb87cd322cf71.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TI-M Client Basis&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                                    <a href="f7ec57d495a4882eb70ab1bf9636e653a9800e0f0c080dfc217938ad7721c248.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TI-M FD Basis&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Plugin</h5>
+                            <div>
+                                    <a href="20e540f9e8ee842698bff859493ae5071fe3897d3993c5a2530710fc430f25cd.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Allowselfcombine(False)&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="ddd49abc69bf2941339cd201717647fb3a50a523de63f5ccd0a875e436007755.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Filter(Apiname1.hastag("proclientv3"))&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="cea0662e593d38d0c0c9bbf5bf6f909bd8675564b41e1e5fd459bbb52bee6c08.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Distinctproperty(Homeserver)&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="73ea2ce9c82b87a4fbf589be6b38ee9e467c2366b9d4ed262d69961e384bb97a.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Filter(ApiName1B.hastag("proclientv3"))&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="045d390b85b61c0375fc56b7d71e640ab460d9defd6b39290708a73426934e51.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Shuffle(True)&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                                    <a href="04794a5ed960fc5e469a40bd2b884fa31e50607bbf1941403bbe56008edf5d83.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Allowdoublelineup(False)&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="56eb436ba9f6da4b21467167e90d02eaff7e28de8d8281bef5b2a5383ddc6d6f.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Filter(ApiName1A.hastag("proclientv3"))&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="b2f613cdbefc483032dd6ec7ad6fdefc645986994fa6c057762077fd12957f22.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Filter(Apiname2.hastag("proclientv3"))&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="19beb0144b3a38e9d778fca7596fe5da635d6cce390659672a0abbfa06374401.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Allowselfcombine(True)&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="ba02700b5b885dfc80d54b77f2cb3697b09ce4e092f9914a9a74895cfcf93fa8.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Allowdoublelineup(True)&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                                    <a href="fa8963e64f67ab2303c1a4c5678e612ac776c31c4b8a6d04bf3c3976a18cdade.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Equalproperty(Homeserver)&nbsp;&nbsp;&nbsp;4
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Status</h5>
+                            <div>
+                                    <a href="16b36824af0423c8594aa55c340a5be9a21ff049608858e50f41700f9f05ac68.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Implementiert&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Tcid</h5>
+                            <div>
+                                    <a href="2f039f33aa38794f167dc0f10e4733223f8c7b42e7e9c66db560720fcd29f90d.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0107&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                                    <a href="65d627f1bbee475ab6184570ec6976a5962820c18e14c0230d6e7e817d85b666.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0101&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                                    <a href="a191bb7cb2b293084624040174426e6b55143a5b3b5ff40fd26ed835a3417581.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0103&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                                    <a href="6a5ed1e4b3d8dd58de2391bba88e6bde89f96eed0aada799c61c7179926199a1.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0105&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                                    <a href="a1f1eb6d34eea2f45d41359425078721c0610268d5bfb41e0fefd3471205cdd3.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0106&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                                    <a href="4c9ec7d83dbd671d9578ae49bff2a84862a61822624f19ae693277723d3eed92.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0108&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                                    <a href="d7123894ccc1aa008ca4904ec948e9273945f1df099406b6ee4029323463b4e7.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0102&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                                    <a href="08153f7ed452ce501e11f8fa8e3a03f9e6d0f34589dea88c3e1ee70928824d00.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> TIM V3 BASIS AF 17X0104&nbsp;&nbsp;&nbsp;1
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Testfall</h5>
+                            <div>
+                                    <a href="b4cbf857506990c596fb50faff38a3afd018e4657602837e3869c8ea75d140e1.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Positiv&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                                <h5 class="card-title">Zul V3</h5>
+                            <div>
+                                    <a href="9648ae06922b79ce73ae7e5ca7e2da988a512bdeebe2134af892b1a5fff4adac.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Pro&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                                    <a href="a7ef9f0338a35406205d77d07921b46be8b234f61f7406e23434757f00e78469.html">
+                                    <span class="tag-badge badge" style="background-color:#b0cf73; margin:1em;padding:4px;">
+                                        <i class="bi bi-tag-fill"></i> Pro Kk&nbsp;&nbsp;&nbsp;8
+                                    </span>
+                                    </a>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="beforefooter"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <span class="version">Serenity BDD version 4.2.30</span>
+        </div>
+    </div>
+</div>
+
+<!-- Chart data -->
+    <!-- PIE CHART -->
+    <script>
+
+        // The results pie chart
+        const outcomeChartCtx = document.getElementById('resultChart');
+
+        // Options define for display value on top of bars
+        const outcomeDetailsReports = [
+            { title: 'Passing Test Cases', link: "28d5fe7f1012f18ec68f3afde420c4fbc1b80332c44024f9e2a42ab2826c31ed.html" },
+            { title: 'Pending Test Cases', link: "d167474f4692bcf7f123ebaf546962b713215f313f901e803af4d6acd3956b38.html" },
+            { title: 'Ignored Test Cases', link: "c163a7c84495e90e51db3f53ff3488f7d9679994f292465e5ef35ce9465c15ac.html" },
+            { title: 'Skipped Test Cases', link: "70e67b026ba3798bed50799a67f702e62e5bdbed8fd048a2816659b4b9d5d2c0.html" },
+            { title: 'Aborted Test Cases',  link: "fe872e2f8d5a25b6748396d9447fc0c6d91919c2d28cc5e4466d894c07a5c8d4.html"},
+            { title: 'Failed Test Cases', link: "1daed736d96402e8574c1187a4a94cdddf9d2b0b0b1c3334cf957e6d75c27b7d.html"  },
+            { title: 'Broken Test Cases', link: "b858f975dbdb9997aca750301d28f9e5bf4bfc4a65b0180fbf199984636554f8.html"    },
+            { title: 'Compromised Test Cases',  link: "73c0f07412b01989cc1de1b83ab8ae1fd38a8ea600455dfa97fb42c765eb340b.html" },
+        ]
+        const outcomeData = {
+            labels: ['Passing Test Cases', 'Pending Test Cases', 'Ignored Test Cases', 'Skipped Test Cases', 'Aborted Test Cases', 'Failed Test Cases', 'Broken Test Cases', 'Compromised Test Cases','Undefined Test Cases'],
+            datasets: [{
+                label: 'Test Results',
+                fill: false,
+                data: [{meta: 'Passing tests', value: 8}, {meta: 'Pending tests', value: 0}, {meta: 'Ignored tests', value: 0}, {meta: 'Skipped tests', value: 0}, {meta: 'Aborted tests', value: 0}, {meta: 'Failing tests', value: 0}, {meta: 'Broken tests', value: 0}, {meta: 'Compromised tests', value: 0}],
+                backgroundColor: ['rgba(153,204,51,0.5)','rgba(165, 199, 238, 0.5)','rgba(168, 168, 168, 0.5)','rgba(238, 224, 152, 0.75)','rgba(255, 153, 102, 0.5)','rgba(255, 22, 49, 0.5)','rgba(255, 97, 8, 0.5)','rgba(255, 104, 255, 0.5)','rgba(83, 50, 168, 0.5)'],
+                borderColor: ['rgba(153,204,51,1)','rgba(165, 199, 238, 1)','rgba(168, 168, 168, 1)','rgba(238, 224, 152, 1)','rgba(255, 153, 102, 1)','rgba(255, 22, 49, 1)','rgba(255, 97, 8, 1)','rgba(255, 104, 255, 1)','rgba(83, 50, 168, 1)'],
+                borderWidth: 1,
+            }]
+        }
+        const outcomeOptions = {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom'
+                },
+                // Change options for ALL labels of THIS CHART
+                datalabels: {
+                    color: '#444444',
+                    'font.weight': 'bold',
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value * 100 / sum).toFixed(0) + "%";
+                        if (percentage === '0%' || percentage === 'NaN%') {
+                            return '';
+                        } else {
+                            return percentage;
+                        }
+                    },
+                },
+            }
+        }
+
+        const outcomeChart = new Chart(outcomeChartCtx, {
+            type: 'doughnut',
+            data: outcomeData,
+            options: outcomeOptions,
+            plugins: [
+                {
+                    id: 'text',
+                    beforeDraw: function (chart, a, b) {
+                        var width = chart.width,
+                            height = chart.height,
+                            ctx = chart.ctx;
+
+                        ctx.restore();
+                        var fontSize = (height / 200).toFixed(1);
+                        ctx.font = fontSize + "em sans-serif";
+                        ctx.textBaseline = "middle";
+
+                        var text = "100%"
+                        textX = 10 + Math.round((width - ctx.measureText(text).width) / 2);
+                        textY = (height / 2) - 40;
+
+                        ctx.fillText(text, textX, textY);
+                        ctx.save();
+                    }
+                }]
+        });
+
+        function clickHandler(click) {
+            const points = outcomeChart.getElementsAtEventForMode(click, 'nearest', {intersect: true}, true);
+            if (points.length) {
+                const firstPoint = points[0];
+                window.open(outcomeDetailsReports[firstPoint.index].link, "_self")
+
+            }
+        }
+        outcomeChartCtx.onclick = clickHandler;
+    </script>
+    <!-- END PIE CHART -->
+
+    <!-- SUMMARY BAR CHART -->
+    <script>
+
+        // The Severity bar chart
+        const severityChartCtx = document.getElementById('severityChart');
+
+        // Options define for display value on top of bars
+
+        const severityDetailsReports = [
+            { title: 'Passing Scenarios', link: "28d5fe7f1012f18ec68f3afde420c4fbc1b80332c44024f9e2a42ab2826c31ed.html" },
+            { title: 'Pending Scenarios', link: "d167474f4692bcf7f123ebaf546962b713215f313f901e803af4d6acd3956b38.html" },
+            { title: 'Ignored Scenarios', link: "c163a7c84495e90e51db3f53ff3488f7d9679994f292465e5ef35ce9465c15ac.html" },
+            { title: 'Skipped Scenarios', link: "70e67b026ba3798bed50799a67f702e62e5bdbed8fd048a2816659b4b9d5d2c0.html" },
+            { title: 'Aborted Scenarios',  link: "fe872e2f8d5a25b6748396d9447fc0c6d91919c2d28cc5e4466d894c07a5c8d4.html"},
+            { title: 'Failed Scenarios', link: "1daed736d96402e8574c1187a4a94cdddf9d2b0b0b1c3334cf957e6d75c27b7d.html"  },
+            { title: 'Broken Scenarios', link: "b858f975dbdb9997aca750301d28f9e5bf4bfc4a65b0180fbf199984636554f8.html"    },
+            { title: 'Compromised Scenarios',  link: "73c0f07412b01989cc1de1b83ab8ae1fd38a8ea600455dfa97fb42c765eb340b.html" },
+        ]
+        const severityData = {
+            labels: ['Passing', 'Pending', 'Ignored', 'Skipped', 'Aborted', 'Failed', 'Broken', 'Compromised'],
+            datasets: [
+                {
+                    label: 'Automated',
+                    data: [8,0,0,0,0,0,0,0],
+                    backgroundColor: ['rgba(153,204,51,0.5)','rgba(165, 199, 238, 0.5)','rgba(168, 168, 168, 0.5)','rgba(238, 224, 152, 0.75)','rgba(255, 153, 102, 0.5)','rgba(255, 22, 49, 0.5)','rgba(255, 97, 8, 0.5)','rgba(255, 104, 255, 0.5)','rgba(83, 50, 168, 0.5)'],
+                    borderColor: ['rgba(153,204,51,1)','rgba(165, 199, 238, 1)','rgba(168, 168, 168, 1)','rgba(238, 224, 152, 1)','rgba(255, 153, 102, 1)','rgba(255, 22, 49, 1)','rgba(255, 97, 8, 1)','rgba(255, 104, 255, 1)','rgba(83, 50, 168, 1)'],
+                    borderWidth: 1
+                },
+                {
+                    label: 'Manual',
+                    data: [0,0,0,0,0,0,0,0],
+                    backgroundColor: ['rgba(153,204,51,0.25)','rgba(165, 199, 238, 0.25)','rgba(168, 168, 168, 0.25)','rgba(238, 224, 152, 0.375)','rgba(255, 153, 102, 0.25)','rgba(255, 22, 49, 0.25)','rgba(255, 97, 8, 0.25)','rgba(255, 104, 255, 0.25)','rgba(83, 50, 168, 0.25)'],
+                    borderColor: ['rgba(153,204,51,1)','rgba(165, 199, 238, 1)','rgba(168, 168, 168, 1)','rgba(238, 224, 152, 1)','rgba(255, 153, 102, 1)','rgba(255, 22, 49, 1)','rgba(255, 97, 8, 1)','rgba(255, 104, 255, 1)','rgba(83, 50, 168, 1)'],
+                    borderWidth: 1
+                },
+
+            ]
+        }
+        const severityOptions = {
+            responsive: true,
+            skipNull: true,
+            scales: {
+                x: {
+                    stacked: true,
+                },
+                y: {
+                    stacked: true,
+                }
+            },
+            plugins: {
+                // Change options for ALL labels of THIS CHART
+                datalabels: {
+                    color: '#444444',
+                    'font.weight': 'bold',
+                    formatter: (value, ctx) => {
+                        if (value === 0) {
+                            return '';
+                        } else {
+                            return value;
+                        }
+                    },
+                }
+            }
+        }
+        const severityChart = new Chart(severityChartCtx, {
+            type: 'bar',
+            data: severityData,
+            options: severityOptions
+        });
+
+        function clickHandler(click) {
+            const points = severityChart.getElementsAtEventForMode(click, 'nearest', {intersect: true}, true);
+            if (points.length) {
+                const firstPoint = points[0];
+                window.open(severityDetailsReports[firstPoint.index].link, "_self")
+
+            }
+        }
+        severityChartCtx.onclick = clickHandler;
+    </script>
+    <!-- END SUMMARY CHART -->
+
+    <!-- DURATION CHART -->
+    <script>
+
+        // Options define for display value on top of bars
+        const durationDetailsReports = [
+                {title: "Under 1 second", link: "9cf31c4dd232900f5ef4ea73a6d0c8f0c3008d410c830a7c2849a9476bc187a6.html"},
+                {title: "1 to 10 seconds", link: "470ca5bda9d441cc3454d0ef134de658c38c8a6f4d1a021753b5cbefce19b46c.html"},
+                {title: "10 to 30 seconds", link: "7db1c53a17fee917f8107cbe07fa5f6993e9914f497c552a24bca41cb6875d65.html"},
+                {title: "30 to 60 seconds", link: "ec4d7665689e762c3f488ab431b311e230e99004d67e6aa39be776a89dc0bfb8.html"},
+                {title: "1 to 2 minutes", link: "56fec3f3f7cb9c16b7303d836a116e00dd8c8a98b2887b038f845c2404ff8859.html"},
+                {title: "2 to 5 minutes", link: "b475c48aa86d98c5ecd102d84469a0388ff036b79e77451d1154e8af5dd1eed0.html"},
+                {title: "5 to 10 minutes", link: "6d619914f49df7d6e9395d48d9bea7ce3e5827e33da6a4c339510fe6be3e729b.html"},
+                {title: "10 minutes or over", link: "65b5ff573a31a6970bb4822c764b59064fdb910d9017185794f0b8e28a18d074.html"},
+        ]
+        // The Severity bar chart
+        const durationChartCtx = document.getElementById('durationChart');
+
+        // Options define for display value on top of bars
+
+        const durationData = {
+            labels: ['Under 1 second','1 to 10 seconds','10 to 30 seconds','30 to 60 seconds','1 to 2 minutes','2 to 5 minutes','5 to 10 minutes','10 minutes or over'],
+            datasets: [{
+                label: 'Number of tests per duration',
+                fill: false,
+                data: ['0','0','0','0','8','0','0','0'],
+                backgroundColor: 'rgba(83, 146, 255,0.5)',
+                borderColor: 'rgba(83, 146, 255, 1)',
+            }]
+        }
+        const durationOptions = {
+            responsive: true,
+            plugins: {
+                // Change options for ALL labels of THIS CHART
+                datalabels: {
+                    color: '#444444',
+                    'font.weight': 'bold',
+                    formatter: (value, ctx) => {
+                        if (value > 0) {
+                            return value;
+                        } else {
+                            return '';
+                        }
+                    },
+                },
+                tooltip: {
+                    enabled: true,
+                    usePointStyle: true,
+                    callbacks: {
+                        label: (data) => {
+                            return data.parsed.y + ' tests'
+                        }
+                    },
+                },
+            },
+        }
+
+        const durationChart = new Chart(durationChartCtx, {
+            type: 'bar',
+            data: durationData,
+            options: durationOptions
+        });
+
+        function durationClickHandler(click) {
+            const points = durationChart.getElementsAtEventForMode(click, 'nearest', {intersect: true}, true);
+            if (points.length) {
+                const firstPoint = points[0];
+                window.open(durationDetailsReports[firstPoint.index].link, "_self")
+
+            }
+        }
+
+        durationChartCtx.onclick = durationClickHandler;
+    </script>
+    <!-- END DURATION CHART -->
+
+
+</body>
+</html>

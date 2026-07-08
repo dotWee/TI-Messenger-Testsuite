@@ -402,7 +402,6 @@ für die <<id2,nicht erfolgreiche>> Berechtigungsprüfung.
 [cols='1,3']
 |===
 | *Tag Name*              | *Beschreibung*
-| @Ctl:NoParallel         | Parallel Claim für einzelne Testfälle ausschalten
 | @Ctl:Additional         | zusätzliche Tests, die kein direktes Akzeptanz-Kriterium bzw. keinen
 Anwendungsfall haben
 | @Ctl:AdditionalIOP      | zusätzliche Tests, die mehrere HomeServer benötigen und für IOP Tests
@@ -1477,12 +1476,6 @@ Das Timeout muss immer größer als das PollInterval sein!
 mvn clean install -DexcludedGroups='<Pattern>' -DpoolGroupString='<Pattern>,<Amount>,<MatchingStrategy>'
 
 Weitere Infos hierzu sind in Kapitel 6.5 vorhanden.
-
-*Im Terminal kann das vorherige Löschen aller aktiven Räume eingeschaltet werden*
-
-mvn clean install -DclearRooms=true
-
-Bitte beachten, dass mit diesem Schalter bei jedem Login eine weitere Anfrage gesendet wird und somit eine im Idealfall unnötige Belastung darstellt.
 
 image::Testrun.png[float="left"]
 

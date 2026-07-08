@@ -75,42 +75,36 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 @NoArgsConstructor(access = PRIVATE)
 public class TestsuiteInitializer {
 
-  public static final String FEATURE_PATH_PROPERTY_NAME = "feature_dir";
-  public static final String FEATURE_PATH;
-  public static final String CLEAR_ROOMS_PROPERTY_NAME = "clearRooms";
-  public static final Boolean CLEAR_ROOMS;
-  public static final String CLAIM_PARALLEL_PROPERTY_NAME = "claimParallel";
-  public static final Boolean CLAIM_PARALLEL;
-  public static final String NO_PARALLEL_TAG = "@Ctl:NoParallel";
-  public static final String POLL_INTERVAL_PROPERTY_NAME = "pollInterval";
-  public static final Long POLL_INTERVAL_DEFAULT = 1L;
-  public static final String TIMEOUT_PROPERTY_NAME = "timeout";
-  public static final Long TIMEOUT_DEFAULT = 10L;
-  public static final String HTTP_TIMEOUT_PROPERTY_NAME = "httpTimeout";
-  public static final Integer HTTP_TIMEOUT;
-  public static final String RUN_WITHOUT_RETRY_PROPERTY_NAME = "runWithoutRetry";
   public static final boolean RUN_WITHOUT_RETRY;
-  public static final String CLAIM_DURATION_PROPERTY_NAME = "claimDuration";
   public static final Integer CLAIM_DURATION;
-  public static final String COMBINE_ITEMS_FILE_PROPERTY_NAME = "combine.items.file";
   public static final String COMBINE_ITEMS_FILE_NAME;
   public static final String COMBINE_ITEMS_FILE_URL;
-  public static final String CHECK_ROOM_STATE_FAIL_PROPERTY_NAME = "skipRoomStateCheck";
-  public static final boolean CHECK_ROOM_STATE_FAIL;
-  public static final String MAX_RETRY_CLAIM_REQUEST_NAME = "maxRetryClaimRequest";
   public static final Integer MAX_RETRY_CLAIM_REQUEST;
-  public static final String BUILD_DIRECTORY_PROPERTY_NAME = "buildDirectory";
-  public static final String DEFAULT_BUILD_DIRECTORY = "target";
-
-  public static String MVN_PROPERTIES_LOCATION = "./target/classes/mvn.properties";
   public static String BUILD_DIRECTORY;
   public static String INDIVIDUAL_LOG_PATH = "./target/individual-log.json";
   public static Long TIMEOUT;
-  public static final String FEATURE_ENDING = "feature";
-  public static final String KEY_STORE_ENV_VAR = "TIM_KEYSTORE";
-  public static final String KEY_STORE_PW_ENV_VAR = "TIM_KEYSTORE_PW";
-  public static final String RUN_WITHOUT_CERT = "no configured cert found";
   public static final String CERT_CN;
+
+  private static final String FEATURE_PATH_PROPERTY_NAME = "feature_dir";
+  private static final String FEATURE_PATH;
+  private static final String POLL_INTERVAL_PROPERTY_NAME = "pollInterval";
+  private static final Long POLL_INTERVAL_DEFAULT = 1L;
+  private static final String TIMEOUT_PROPERTY_NAME = "timeout";
+  private static final Long TIMEOUT_DEFAULT = 10L;
+  private static final String HTTP_TIMEOUT_PROPERTY_NAME = "httpTimeout";
+  private static final Integer HTTP_TIMEOUT;
+  private static final String RUN_WITHOUT_RETRY_PROPERTY_NAME = "runWithoutRetry";
+  private static final String CLAIM_DURATION_PROPERTY_NAME = "claimDuration";
+  private static final String COMBINE_ITEMS_FILE_PROPERTY_NAME = "combine.items.file";
+  private static final String MAX_RETRY_CLAIM_REQUEST_NAME = "maxRetryClaimRequest";
+  private static final String DEFAULT_MVN_PROPERTIES_LOCATION = "./target/classes/mvn.properties";
+  private static final String MVN_PROPERTIES_LOCATION;
+  private static final String BUILD_DIRECTORY_PROPERTY_NAME = "buildDirectory";
+  private static final String DEFAULT_BUILD_DIRECTORY = "target";
+  private static final String FEATURE_ENDING = "feature";
+  private static final String KEY_STORE_ENV_VAR = "TIM_KEYSTORE";
+  private static final String KEY_STORE_PW_ENV_VAR = "TIM_KEYSTORE_PW";
+  private static final String RUN_WITHOUT_CERT = "no configured cert found";
 
   @Getter private static final Jackson2Mapper fhirMapper;
   static Long pollInterval;
@@ -119,15 +113,15 @@ public class TestsuiteInitializer {
     BUILD_DIRECTORY = System.getProperty(BUILD_DIRECTORY_PROPERTY_NAME);
 
     Properties properties = new Properties();
-    try {
-      if (BUILD_DIRECTORY == null) {
-        BUILD_DIRECTORY = DEFAULT_BUILD_DIRECTORY;
-      }
-      MVN_PROPERTIES_LOCATION =
-          MVN_PROPERTIES_LOCATION.replace(DEFAULT_BUILD_DIRECTORY, BUILD_DIRECTORY);
-      INDIVIDUAL_LOG_PATH = INDIVIDUAL_LOG_PATH.replace(DEFAULT_BUILD_DIRECTORY, BUILD_DIRECTORY);
+    if (BUILD_DIRECTORY == null) {
+      BUILD_DIRECTORY = DEFAULT_BUILD_DIRECTORY;
+    }
+    MVN_PROPERTIES_LOCATION =
+        DEFAULT_MVN_PROPERTIES_LOCATION.replace(DEFAULT_BUILD_DIRECTORY, BUILD_DIRECTORY);
+    INDIVIDUAL_LOG_PATH = INDIVIDUAL_LOG_PATH.replace(DEFAULT_BUILD_DIRECTORY, BUILD_DIRECTORY);
 
-      FileInputStream fileStream = FileUtils.openInputStream(new File(MVN_PROPERTIES_LOCATION));
+    try (FileInputStream fileStream =
+        FileUtils.openInputStream(new File(MVN_PROPERTIES_LOCATION))) {
       properties.load(fileStream);
     } catch (IOException e) {
       log.error("Could not find any maven properties at {}", MVN_PROPERTIES_LOCATION);
@@ -152,18 +146,14 @@ public class TestsuiteInitializer {
             isBlank(properties.getProperty(MAX_RETRY_CLAIM_REQUEST_NAME))
                 ? "3"
                 : properties.getProperty(MAX_RETRY_CLAIM_REQUEST_NAME));
-    CHECK_ROOM_STATE_FAIL =
-        Boolean.parseBoolean(properties.getProperty(CHECK_ROOM_STATE_FAIL_PROPERTY_NAME));
     CERT_CN = parseCn();
-    CLEAR_ROOMS = Boolean.parseBoolean(properties.getProperty(CLEAR_ROOMS_PROPERTY_NAME));
-    CLAIM_PARALLEL = Boolean.parseBoolean(properties.getProperty(CLAIM_PARALLEL_PROPERTY_NAME));
     COMBINE_ITEMS_FILE_URL = properties.getProperty(COMBINE_ITEMS_FILE_PROPERTY_NAME);
     COMBINE_ITEMS_FILE_NAME = new File(COMBINE_ITEMS_FILE_URL).getName();
     FEATURE_PATH = properties.getProperty(FEATURE_PATH_PROPERTY_NAME);
     try {
       TIMEOUT = Long.parseLong(timeoutString);
       pollInterval = Long.parseLong(pollIntervalString);
-    } catch (Exception ex) {
+    } catch (Exception e) {
       TIMEOUT = TIMEOUT_DEFAULT;
       pollInterval = POLL_INTERVAL_DEFAULT;
       log.info(
@@ -215,31 +205,30 @@ public class TestsuiteInitializer {
     HttpClientConfig httpClientFactory =
         HttpClientConfig.httpClientConfig()
             .setParam("http.socket.timeout", HTTP_TIMEOUT * 1000)
-            .setParam("http.connection.timout", HTTP_TIMEOUT * 1000);
-
+            .setParam("http.connection.timeout", HTTP_TIMEOUT * 1000);
     RestAssured.config = RestAssured.config().httpClient(httpClientFactory);
   }
 
   private static Jackson2Mapper createMapper() {
     return new Jackson2Mapper(
-        (type, s) -> {
+        (type, string) -> {
           ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
           objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
           return objectMapper;
         });
   }
 
-  private static List<File> getFeatureFiles(File file) {
-    List<File> files = new ArrayList<>();
-    for (File f : requireNonNull(file.listFiles())) {
-      if (f.isDirectory()) {
-        files.addAll(getFeatureFiles(f));
+  private static List<File> getFeatureFiles(File parentFile) {
+    List<File> featureFiles = new ArrayList<>();
+    for (File file : requireNonNull(parentFile.listFiles())) {
+      if (file.isDirectory()) {
+        featureFiles.addAll(getFeatureFiles(file));
       }
-      if (f.getAbsolutePath().endsWith(FEATURE_ENDING)) {
-        files.add(f);
+      if (file.getAbsolutePath().endsWith(FEATURE_ENDING)) {
+        featureFiles.add(file);
       }
     }
-    return files;
+    return featureFiles;
   }
 
   private static Set<String> getHttpsApisFromFeatureFiles() {
@@ -276,7 +265,7 @@ public class TestsuiteInitializer {
           parse(store.getCertificate(store.aliases().nextElement()).getEncoded());
       RDN cn = new JcaX509CertificateHolder(cert).getSubject().getRDNs(BCStyle.CN)[0];
       return cn.getFirst().getValue().toString();
-    } catch (Exception ex) {
+    } catch (Exception e) {
       log.error("Could not parse certificate KEY_STORE: {}", System.getenv(KEY_STORE_ENV_VAR));
     }
     return RUN_WITHOUT_CERT;
@@ -302,7 +291,7 @@ public class TestsuiteInitializer {
   }
 
   @SneakyThrows
-  private static GherkinDocument transformToGherkin(File f) {
-    return parseGherkinString(Files.readString(f.toPath()));
+  private static GherkinDocument transformToGherkin(File file) {
+    return parseGherkinString(Files.readString(file.toPath()));
   }
 }

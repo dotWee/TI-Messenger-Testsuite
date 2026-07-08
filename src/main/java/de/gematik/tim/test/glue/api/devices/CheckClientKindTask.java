@@ -29,15 +29,15 @@ import static de.gematik.tim.test.glue.api.devices.ClientKind.PRO_PRACTITIONER;
 import static de.gematik.tim.test.glue.api.info.ApiInfoQuestion.apiInfo;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import de.gematik.tim.test.glue.api.threading.ParallelTaskRunner;
 import de.gematik.tim.test.models.InfoObjectDTO;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import net.serenitybdd.screenplay.Actor;
+import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.rest.abilities.CallAnApi;
 
 @RequiredArgsConstructor
-public class CheckClientKindTask extends ParallelTaskRunner {
+public class CheckClientKindTask implements Task {
 
   private final List<ClientKind> kind;
 
@@ -46,18 +46,12 @@ public class CheckClientKindTask extends ParallelTaskRunner {
   }
 
   @Override
-  public void runParallel() {
-    this.performAs(actor);
-  }
-
-  @Override
   public <T extends Actor> void performAs(T actor) {
-    this.actor = actor;
-    InfoObjectDTO info = apiInfo().withActor(actor).run();
-    checkForKinds(info);
+    InfoObjectDTO info = actor.asksFor(apiInfo());
+    checkForKinds(actor, info);
   }
 
-  private void checkForKinds(InfoObjectDTO info) {
+  private void checkForKinds(Actor actor, InfoObjectDTO info) {
     if (kind.contains(ORG_ADMIN)) {
       assertThat(info.getClientInfo().getCanAdministrateFhirOrganization())
           .as(
