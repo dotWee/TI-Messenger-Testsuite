@@ -6,7 +6,7 @@ info:
     
     This API contains all endpoints for version 1.1.x, version 2 (TIM Pro & TIM ePA) and version 3 (TIM Pro & TIM ePA) of the TI-Messenger. The tags named accordingly can be used to find the endpoints applicable for the desired version.
     Additionally each endpoint summary will contain a note describing whether the endpoint is used by an org-admin, a client or both.
-  version: 2.3.0
+  version: 2.4.0
   contact:
     name: gematik GmbH
     email: software-development@gematik.de
@@ -1122,29 +1122,12 @@ paths:
       - $ref: "#/components/parameters/roomId"
       - $ref: "#/components/parameters/messageId"
 
-    get:
-      summary: "Get single message. Used by clients."
-      tags:
-        - message
-      operationId: getMessage
-      responses:
-        "200":
-          description: "Message information"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        default:
-          $ref: "#/components/responses/DefaultResponse"
-
     put:
       summary: "Edit an existing message. Used by clients."
+      description:
+        "After editing the body of the response is expected to read the content of the m.new_content body.
+         The event_id needs to stay the same as the event_id of the originally send message.
+         MessageId also stays the same as it was before editing."
       tags:
         - message
         - TI-M_1.1.x
@@ -1209,6 +1192,9 @@ paths:
 
     delete:
       summary: "Deletes a message by replacing it. Used by clients."
+      description:
+        "The event_id needs to stay the same as the event_id of the originally send message.
+         MessageId also stays the same as it was before editing."
       tags:
         - message
         - TI-M_Pro_V3
@@ -1737,6 +1723,8 @@ paths:
         - authorizationManagement
         - TI-M_Pro_V2
         - TI-M_ePA_V2
+        - TI-M_Pro_V3
+        - TI-M_ePA_V3
       summary: "Returns a list of all mxids, server-names and groups, which are allowed to contact the client. Used by clients."
       operationId: getAllowedUsersList
       responses:
@@ -1946,7 +1934,7 @@ components:
         "username": "@423-mxId:localhost8090"
         "password": "b7f2-5dfc72d4c14a"
 
-  
+
   parameters:
 
     deviceId:
@@ -2991,7 +2979,10 @@ components:
           example: "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 
     MediaFileId:
-      description: "A unique id to a previously uploaded file. For example an UUID."
+      description: |
+        A unique id to a previously uploaded file. For example an UUID.
+        Will be used by the test driver to access uploaded files.
+        Has no equivalent in the Matrix protocol, but can for example be derived from the MXC url of the uploaded file.
       required:
         - fileId
       properties:

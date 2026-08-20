@@ -30,9 +30,9 @@ import static de.gematik.tim.test.glue.api.devices.UseDeviceAbility.useDevice;
 import static de.gematik.tim.test.glue.api.utils.IndividualLogger.individualLog;
 import static de.gematik.tim.test.glue.api.utils.RequestResponseUtils.parseResponse;
 import static de.gematik.tim.test.glue.api.utils.RequestResponseUtils.repeatedRequestWithLongerTimeout;
-import static de.gematik.tim.test.glue.api.utils.TestsuiteInitializer.CERT_CN;
 import static de.gematik.tim.test.glue.api.utils.TestsuiteInitializer.CLAIM_DURATION;
 import static de.gematik.tim.test.glue.api.utils.TestsuiteInitializer.MAX_RETRY_CLAIM_REQUEST;
+import static de.gematik.tim.test.glue.api.utils.TestsuiteInitializer.ORGANIZATION_NAME;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PRIVATE;
@@ -128,6 +128,6 @@ public class ClaimDeviceTask implements Task {
   }
 
   private ClaimDeviceRequestDTO getClaimDeviceRequestDTO() {
-    return new ClaimDeviceRequestDTO().claimerName(CERT_CN).claimFor(claimDuration);
+    return new ClaimDeviceRequestDTO().claimerName(ORGANIZATION_NAME).claimFor(claimDuration);
   }
 }

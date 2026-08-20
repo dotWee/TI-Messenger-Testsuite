@@ -1,0 +1,99 @@
+[
+  {
+    "value": "testdriverApi-D-WIN-Pro",
+    "url": "https://localhost:8080",
+    "tags": [
+      "proClient",
+      "canSendMessages",
+      "prefIOP"
+    ],
+    "properties": {
+      "homeserver": "D",
+      "os": "Windows"
+    }
+  },
+  {
+    "value": "testdriverApi-D-ORG",
+    "url": "https://localhost:8081",
+    "tags": [
+      "orgAdmin"
+    ],
+    "properties": {
+      "homeserver": "D",
+      "os": "Windows"
+    }
+  },
+  {
+    "value": "testdriverApi-E-WIN-Pro",
+    "url": "https://localhost:8082",
+    "tags": [
+      "proClient",
+      "canSendMessages",
+      "prefIOP"
+    ],
+    "properties": {
+      "homeserver": "E",
+      "os": "Windows"
+    }
+  },
+  {
+    "value": "testdriverApi-E-ORG",
+    "url": "https://localhost:8083",
+    "tags": [
+      "orgAdmin"
+    ],
+    "properties": {
+      "homeserver": "E",
+      "os": "Linux"
+    }
+  },
+  {
+    "value": "testdriverApi-G-AND-Pro-V3",
+    "url": "https://localhost:8084",
+    "tags": [
+      "proClientV3",
+      "isVersionThree"
+    ],
+    "properties": {
+      "homeserver": "G",
+      "os": "Android"
+    }
+  },
+  {
+    "value": "testdriverApi-G-ORG",
+    "url": "https://localhost:8085",
+    "tags": [
+      "orgAdmin"
+    ],
+    "properties": {
+      "homeserver": "G",
+      "os": "Linux"
+    }
+  },
+  {
+    "value": "testdriverApi-H-AND-Ref-Impl",
+    "url": "https://localhost:8086",
+    "tags": [
+      "proClientV3",
+      "practitioner",
+      "isVersionThree",
+      "refImpl"
+    ],
+    "properties": {
+      "homeserver": "H",
+      "os": "Android"
+    }
+  },
+  {
+    "value": "testdriverApi-H-ORG",
+    "url": "https://localhost:8087",
+    "tags": [
+      "orgAdmin",
+      "refImpl"
+    ],
+    "properties": {
+      "homeserver": "H",
+      "os": "Linux"
+    }
+  }
+]

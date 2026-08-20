@@ -35,6 +35,7 @@ import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.getRo
 import static de.gematik.tim.test.models.FhirResourceTypeDTO.ENDPOINT;
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
+import static java.util.Comparator.comparing;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.groupingBy;
 import static net.serenitybdd.screenplay.actors.OnStage.theActorCalled;
@@ -183,6 +184,15 @@ public class GlueUtils {
         .filter(message -> message.getBody().equals(text))
         .filter(message -> message.getAuthor().equals(theActorCalled(userName).recall(MX_ID)))
         .toList();
+  }
+
+  public static MessageDTO filterMessagesForSenderAndNewest(
+      String userName, List<MessageDTO> messages) {
+    return messages.stream()
+        .filter(message -> message.getAuthor().equals(theActorCalled(userName).recall(MX_ID)))
+        .filter(message -> nonNull(message.getTimestamp()))
+        .max(comparing(MessageDTO::getTimestamp))
+        .orElseThrow();
   }
 
   @SneakyThrows

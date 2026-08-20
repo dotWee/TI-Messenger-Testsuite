@@ -673,13 +673,13 @@ public class RoomControllerGlue {
 
       final String matrixRoomStateValue =
           foundRoomStates.stream()
-              .filter(rs -> rs.getType().equals(matrixRoomState.getType()))
+              .filter(roomState -> roomState.getType().equals(matrixRoomState.getType()))
               .findFirst()
               .map(roomState -> extractContentValue(roomState.getContent()))
               .orElse(null);
       final String gematikRoomStateValue =
           foundRoomStates.stream()
-              .filter(rs -> rs.getType().equals(matrixRoomState.getType()))
+              .filter(roomState -> roomState.getType().equals(gematikRoomState.getType()))
               .findFirst()
               .map(roomState -> extractContentValue(roomState.getContent()))
               .orElse(null);
@@ -699,7 +699,6 @@ public class RoomControllerGlue {
     if (jsonMapWithSingleKeyValue == null || jsonMapWithSingleKeyValue.trim().isEmpty()) {
       return null;
     }
-    // Remove whitespace and curly braces, then split by colon
     String trimmed = jsonMapWithSingleKeyValue.trim();
     if (!trimmed.startsWith("{") || !trimmed.endsWith("}")) {
       throw new IllegalArgumentException("Expected json map but got: " + jsonMapWithSingleKeyValue);
@@ -711,7 +710,6 @@ public class RoomControllerGlue {
       throw new IllegalArgumentException(
           "Expected json map with single key-value but got: " + jsonMapWithSingleKeyValue);
     }
-    // Remove quotes and whitespace from the value
     String value = parts[1].trim();
     if (value.startsWith("\"") && value.endsWith("\"")) {
       value = value.substring(1, value.length() - 1);
