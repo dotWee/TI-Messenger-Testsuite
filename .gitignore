@@ -3,13 +3,7 @@
 *.iml
 
 ### Maven ###
-/target/
-/target11x/
-/targetV2basis/
-/targetV2proEpa/
-/targetV3basis1/
-/targetV3basis2/
-/targetV3proEpa/
+/target*/
 
 ### GEN ###
 gen
@@ -42,6 +36,7 @@ src/main/resources/tigerYml/
 src/test/resources/templates/ConfidentialityEnhancement/
 src/test/resources/templates/FeatureFiles/TI-M_11X/ZusatztestsOrgOnly/
 src/test/resources/templates/FeatureFiles/TI-M_11X/Zusatztests/
+src/test/resources/templates/FeatureFiles/TI-M_V4
 src/test/resources/templates/Suites_Archiv
 src/test/resources/templates/Spielwiese/
 
@@ -54,4 +49,5 @@ dev-pom.xml
 release-pom.xml
 config.env
 prod-pom.xml
+renovate.json
 

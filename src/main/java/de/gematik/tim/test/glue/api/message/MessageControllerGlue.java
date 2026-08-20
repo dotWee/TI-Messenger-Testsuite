@@ -23,7 +23,6 @@ import static de.gematik.tim.test.glue.api.ActorMemoryKeys.DIRECT_CHAT_NAME;
 import static de.gematik.tim.test.glue.api.ActorMemoryKeys.MX_ID;
 import static de.gematik.tim.test.glue.api.GeneralStepsGlue.checkResponseCode;
 import static de.gematik.tim.test.glue.api.fhir.organisation.FhirOrgAdminGlue.findsAddressInHealthcareService;
-import static de.gematik.tim.test.glue.api.message.questions.GetLastOwnMessageFromRoomQuestion.lastOwnMessage;
 import static de.gematik.tim.test.glue.api.message.questions.GetNoMessageQuestion.noMessageFromSenderWithTextInActiveRoom;
 import static de.gematik.tim.test.glue.api.message.questions.GetRoomMessageQuestion.messageFromSenderWithTextInActiveRoom;
 import static de.gematik.tim.test.glue.api.message.questions.GetRoomMessagesQuestion.messagesInActiveRoom;
@@ -37,7 +36,9 @@ import static de.gematik.tim.test.glue.api.room.UseRoomAbility.addRoomToActor;
 import static de.gematik.tim.test.glue.api.utils.GlueUtils.checkRoomMembershipState;
 import static de.gematik.tim.test.glue.api.utils.GlueUtils.checkRoomMembershipStateInDirectChatOf;
 import static de.gematik.tim.test.glue.api.utils.GlueUtils.checkRoomVersion;
+import static de.gematik.tim.test.glue.api.utils.GlueUtils.createUniqueMessageTextWithTimestamp;
 import static de.gematik.tim.test.glue.api.utils.GlueUtils.filterMessageForSenderAndText;
+import static de.gematik.tim.test.glue.api.utils.GlueUtils.filterMessagesForSenderAndNewest;
 import static de.gematik.tim.test.glue.api.utils.GlueUtils.getRoomBetweenTwoActors;
 import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.getCreatedMessage;
 import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.getInternalRoomNameForActor;
@@ -277,13 +278,25 @@ public class MessageControllerGlue {
     } else if (deletionType.equals("replace")) {
       Actor actor = theActorCalled(actorName);
       actor.abilityTo(UseRoomAbility.class).setActive(roomName);
-      List<MessageDTO> messages = actor.asksFor(messagesInActiveRoom());
-      MessageDTO message =
+      List<MessageDTO> messagesBeforeDeleting = actor.asksFor(messagesInActiveRoom());
+      MessageDTO newestMessageBeforeDeleting =
           filterMessageForSenderAndText(
-              getCreatedMessage(messageName).getBody(), actorName, messages);
-      actor.attemptsTo(deleteReplaceMessageWithId(message.getMessageId()));
-
+              getCreatedMessage(messageName).getBody(), actorName, messagesBeforeDeleting);
+      actor.attemptsTo(deleteReplaceMessageWithId(newestMessageBeforeDeleting.getMessageId()));
       checkResponseCode(actorName, NO_CONTENT.value());
+
+      List<MessageDTO> messagesAfterDeleting = actor.asksFor(messagesInActiveRoom());
+      MessageDTO newestMessageAfterDeleting =
+          filterMessagesForSenderAndNewest(actorName, messagesAfterDeleting);
+      assertThat(newestMessageAfterDeleting.getBody())
+          .as(
+              "The message body must be empty, but instead it is "
+                  + newestMessageAfterDeleting.getBody())
+          .isEmpty();
+      assertThat(newestMessageAfterDeleting.getEventId())
+          .isEqualTo(newestMessageBeforeDeleting.getEventId());
+      assertThat(newestMessageAfterDeleting.getMessageId())
+          .isEqualTo(newestMessageBeforeDeleting.getMessageId());
     } else {
       throw new NotImplementedException(
           "Unknown deletion type. Add a new deletionType in the glue step to support this deletion.");
@@ -295,9 +308,40 @@ public class MessageControllerGlue {
   public void editsHerLastSentMessageTo(String actorName, String roomName, String messageText) {
     Actor actor = theActorCalled(actorName);
     actor.abilityTo(UseRoomAbility.class).setActive(roomName);
-    MessageDTO message = actor.asksFor(lastOwnMessage());
-    actor.attemptsTo(editMessage().withMessage(messageText).withMessageId(message.getMessageId()));
+    List<MessageDTO> messagesBeforeEditing = actor.asksFor(messagesInActiveRoom());
+    int amountOfMessagesBeforeEditing = messagesBeforeEditing.size();
+    MessageDTO newestMessageBeforeEdit =
+        filterMessagesForSenderAndNewest(actorName, messagesBeforeEditing);
+    String uniqueMessageText = createUniqueMessageTextWithTimestamp();
+    actor.attemptsTo(
+        editMessage()
+            .withMessage(messageText)
+            .withMessageId(newestMessageBeforeEdit.getMessageId())
+            .withBody(uniqueMessageText));
     checkResponseCode(actorName, OK.value());
+
+    List<MessageDTO> messagesAfterEditing = actor.asksFor(messagesInActiveRoom());
+    int amountOfMessagesAfterEditing = messagesAfterEditing.size();
+
+    assertThat(amountOfMessagesBeforeEditing)
+        .as(
+            "The number of available messages changed between edits. Before there were "
+                + amountOfMessagesBeforeEditing
+                + ", now there are "
+                + amountOfMessagesAfterEditing)
+        .isEqualTo(amountOfMessagesAfterEditing);
+    MessageDTO newestMessageAfterEdit =
+        filterMessagesForSenderAndNewest(actorName, messagesAfterEditing);
+    assertThat(newestMessageAfterEdit.getBody())
+        .as(
+            "The message body must match m.new_content: "
+                + uniqueMessageText
+                + ", but instead it is "
+                + newestMessageAfterEdit.getBody())
+        .isEqualTo(uniqueMessageText);
+    assertThat(newestMessageAfterEdit.getEventId()).isEqualTo(newestMessageBeforeEdit.getEventId());
+    assertThat(newestMessageAfterEdit.getMessageId())
+        .isEqualTo(newestMessageBeforeEdit.getMessageId());
   }
 
   @Then("{string} edits her last sent message in chat with {string} to {string}")

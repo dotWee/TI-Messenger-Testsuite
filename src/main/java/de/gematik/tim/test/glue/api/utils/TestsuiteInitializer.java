@@ -83,7 +83,7 @@ public class TestsuiteInitializer {
   public static String BUILD_DIRECTORY;
   public static String INDIVIDUAL_LOG_PATH = "./target/individual-log.json";
   public static Long TIMEOUT;
-  public static final String CERT_CN;
+  public static final String ORGANIZATION_NAME;
 
   private static final String FEATURE_PATH_PROPERTY_NAME = "feature_dir";
   private static final String FEATURE_PATH;
@@ -127,8 +127,6 @@ public class TestsuiteInitializer {
       log.error("Could not find any maven properties at {}", MVN_PROPERTIES_LOCATION);
       throw new IllegalArgumentException(e);
     }
-    String timeoutString = properties.getProperty(TIMEOUT_PROPERTY_NAME);
-    String pollIntervalString = properties.getProperty(POLL_INTERVAL_PROPERTY_NAME);
     RUN_WITHOUT_RETRY =
         Boolean.parseBoolean(properties.getProperty(RUN_WITHOUT_RETRY_PROPERTY_NAME));
     CLAIM_DURATION =
@@ -146,22 +144,35 @@ public class TestsuiteInitializer {
             isBlank(properties.getProperty(MAX_RETRY_CLAIM_REQUEST_NAME))
                 ? "3"
                 : properties.getProperty(MAX_RETRY_CLAIM_REQUEST_NAME));
-    CERT_CN = parseCn();
+    ORGANIZATION_NAME = parseOrganizationName();
     COMBINE_ITEMS_FILE_URL = properties.getProperty(COMBINE_ITEMS_FILE_PROPERTY_NAME);
     COMBINE_ITEMS_FILE_NAME = new File(COMBINE_ITEMS_FILE_URL).getName();
     FEATURE_PATH = properties.getProperty(FEATURE_PATH_PROPERTY_NAME);
-    try {
-      TIMEOUT = Long.parseLong(timeoutString);
-      pollInterval = Long.parseLong(pollIntervalString);
-    } catch (Exception e) {
-      TIMEOUT = TIMEOUT_DEFAULT;
-      pollInterval = POLL_INTERVAL_DEFAULT;
-      log.info(
-          "Could not parse timeout ({}) or pollInterval ({}). Will use default -> timeout: {}, pollInterval: {}",
-          timeoutString,
-          pollIntervalString,
-          TIMEOUT,
-          pollInterval);
+
+    String timeoutString = properties.getProperty(TIMEOUT_PROPERTY_NAME);
+    TIMEOUT = TIMEOUT_DEFAULT;
+    if (!timeoutString.isEmpty()) {
+      try {
+        TIMEOUT = Long.parseLong(timeoutString);
+      } catch (NumberFormatException e) {
+        log.info(
+            "Could not parse timeout ({}). Will use default -> timeout: {}",
+            timeoutString,
+            TIMEOUT);
+      }
+    }
+
+    String pollIntervalString = properties.getProperty(POLL_INTERVAL_PROPERTY_NAME);
+    pollInterval = POLL_INTERVAL_DEFAULT;
+    if (!pollIntervalString.isEmpty()) {
+      try {
+        pollInterval = Long.parseLong(pollIntervalString);
+      } catch (NumberFormatException e) {
+        log.info(
+            "Could not parse pollInterval ({}). Will use default -> pollInterval: {}",
+            pollIntervalString,
+            pollInterval);
+      }
     }
 
     fhirMapper = createMapper();
@@ -257,16 +268,17 @@ public class TestsuiteInitializer {
         .collect(Collectors.toSet());
   }
 
-  private static String parseCn() {
+  private static String parseOrganizationName() {
     try (InputStream stream = new FileInputStream(System.getenv(KEY_STORE_ENV_VAR))) {
       KeyStore store = KeyStore.getInstance("PKCS12");
       store.load(stream, System.getenv(KEY_STORE_PW_ENV_VAR).toCharArray());
       X509Certificate cert =
           parse(store.getCertificate(store.aliases().nextElement()).getEncoded());
-      RDN cn = new JcaX509CertificateHolder(cert).getSubject().getRDNs(BCStyle.CN)[0];
-      return cn.getFirst().getValue().toString();
+      RDN organizationName = new JcaX509CertificateHolder(cert).getSubject().getRDNs(BCStyle.O)[0];
+      return organizationName.getFirst().getValue().toString();
     } catch (Exception e) {
-      log.error("Could not parse certificate KEY_STORE: {}", System.getenv(KEY_STORE_ENV_VAR));
+      log.error(
+          "Could not parse certificate name from KEY_STORE: {}", System.getenv(KEY_STORE_ENV_VAR));
     }
     return RUN_WITHOUT_CERT;
   }

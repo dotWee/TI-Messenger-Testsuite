@@ -13,6 +13,37 @@
 [
 `docu Testset_V3.adoc`](https://github.com/gematik/TI-Messenger-Testsuite/tree/main/doc/userguide/Testset_V3.adoc)
 
+## Release 3.1.3
+
+### Known issues
+
+- The Tiger proxy does not close TCP connections on its server-facing side (proxy → backend). This will be fixed with in
+  Tiger with a future release. While this may lead to many open connections, it is unlikely, that it will completely
+  exhaust the available ports. All connections are closed at the end of the tests.
+  **Workaround:** Configure the backend server to close idle connections (e.g., set an idle timeout or disable HTTP
+  keep-alive).
+- Due to the stricter validation of message editing, the listed V2 tests will fail against the reference implementation.
+  This will be adjusted in a future release of the reference implementation: @TCID:TIM_V2_BASIS_AF_040108, @TCID:
+  TIM_V2_BASIS_AF_040112, @TCID:TIM_V2_BASIS_AF_040903, @TCID:TIM_V2_BASIS_AF_040906, @TCID:TIM_V2_BASIS_AF_060106,
+  @TCID:TIM_V2_BASIS_AF_060110, @TCID:TIM_V2_BASIS_AF_060506, @TCID:TIM_V2_BASIS_AF_060510, @TCID:
+  TIM_V2_BASIS_AF_060606, and @TCID:TIM_V2_BASIS_AF_060610
+
+### Bugfixes
+
+- fixes false positives for comparing the room states topic and name
+- fixes parameter timeout and pollInterval not being able to be set independently of each other
+
+### Changes
+
+- test driver API: Removed the unused endpoint getMessage
+- test driver API: Adds V3 tags to endpoint with id: getAllowedUsersList
+- test driver API: Clarifies description of operationId: editMessage and operationId: deleteMessageViaReplace
+- adds more in-depth tests for editing messages, including body, event_id and MessageId
+- adds more in-depth tests for deleting messages via replace, including event_id and MessageId
+
+- dependency updates:
+    - Bumps de.gematik:cucumber-test-combinations-maven-plugin from 2.12.0 to 2.13.1
+
 ## Release 3.1.2
 
 ### Known issues
