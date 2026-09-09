@@ -525,8 +525,8 @@ paths:
         - TI-M_Pro_V3
       summary: "Get all endpoints for the healthcareService. Used by Org-Admin."
       description: "Get all endpoints for healthcare-service.
-      (the search result could also contain all other resources that are related with it.
-      Please ensure that the searched resources are included at any time!)"
+        (the search result could also contain all other resources that are related with it.
+        Please ensure that the searched resources are included at any time!)"
       operationId: getEndpoints
       responses:
         "200":
@@ -942,8 +942,8 @@ paths:
         - TI-M_1.1.x
       summary: "Returns the found endpoints of the healthcare services matching the query. Used by clients."
       description: "Returns the found endpoints of the healthcare services matching the query.
-      (the search result could also contain all other resources that are related with it.
-      Please ensure that the searched resources are included at any time!)"
+        (the search result could also contain all other resources that are related with it.
+        Please ensure that the searched resources are included at any time!)"
       operationId: searchHsEndpointInFhirDirectory
       parameters:
         - name: mxId
@@ -1024,8 +1024,8 @@ paths:
         - TI-M_ePA_V3
       summary: "Send a direct message. Used by clients."
       description: "Send a direct message to another user.
-      Should work without creating a dedicated room first.
-      The recipients MxId is received through a searchInFhirDirectory-Request."
+        Should work without creating a dedicated room first.
+        The recipients MxId is received through a searchInFhirDirectory-Request."
       operationId: sendDirectMessage
       requestBody:
         content:
