@@ -1,14 +1,18 @@
 # default local Tiger Proxy
+lib:
+  createRbelHtmlReports: ${GENERATE_RBEL_LOGS|true}
 tigerProxy:
   tls:
     forwardMutualTlsIdentity: "${TIM_KEYSTORE};${TIM_KEYSTORE_PW};pkcs12"
+  activateRbelParsing: ${GENERATE_RBEL_LOGS|true}
+  rbelBufferSizeInMb: ${RBEL_BUFFER_SIZE_MB|1024}
 
 servers:
   testdriverApi-A-WIN-Client:
     type: externalJar
     startupTimeoutSec: 240
     source:
-      - "local:target11x/testdriverSim.jar"
+      - "local:../../../../target11x/testdriverSim.jar"
     healthcheckUrl: https://127.0.0.1:8080/actuator/health
     environment:
       - SERVER_PORT=8080
@@ -22,14 +26,14 @@ servers:
       - spring.application.name=A_Windows_Client
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
 
   testdriverApi-A-ORG:
     type: externalJar
     dependsUpon: testdriverApi-A-WIN-Client
     startupTimeoutSec: 240
     source:
-      - "local:target11x/testdriverSim.jar"
+      - "local:../../../../target11x/testdriverSim.jar"
     healthcheckUrl: https://127.0.0.1:8081/actuator/health
     environment:
       - SERVER_PORT=8081
@@ -43,14 +47,14 @@ servers:
       - spring.application.name=A_ORG
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
 
   testdriverApi-B-WIN-Client:
     type: externalJar
     dependsUpon: testdriverApi-A-ORG
     startupTimeoutSec: 240
     source:
-      - "local:target11x/testdriverSim.jar"
+      - "local:../../../../target11x/testdriverSim.jar"
     healthcheckUrl: https://127.0.0.1:8082/actuator/health
     environment:
       - SERVER_PORT=8082
@@ -64,14 +68,14 @@ servers:
       - spring.application.name=B_Windows_Client
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
 
   testdriverApi-B-ORG:
     type: externalJar
     dependsUpon: testdriverApi-B-WIN-Client
     startupTimeoutSec: 240
     source:
-      - "local:target11x/testdriverSim.jar"
+      - "local:../../../../target11x/testdriverSim.jar"
     healthcheckUrl: https://127.0.0.1:8083/actuator/health
     environment:
       - SERVER_PORT=8083
@@ -85,4 +89,4 @@ servers:
       - spring.application.name=B_ORG
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m

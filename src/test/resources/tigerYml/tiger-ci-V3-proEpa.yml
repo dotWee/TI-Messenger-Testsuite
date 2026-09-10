@@ -1,14 +1,19 @@
+lib:
+  createRbelHtmlReports: ${GENERATE_RBEL_LOGS|true}
+
 # default local Tiger Proxy
 tigerProxy:
   tls:
     forwardMutualTlsIdentity: "${TIM_KEYSTORE};${TIM_KEYSTORE_PW};pkcs12"
+  activateRbelParsing: ${GENERATE_RBEL_LOGS|true}
+  rbelBufferSizeInMb: ${RBEL_BUFFER_SIZE_MB|1024}
 
 servers:
   testdriverApi-F-AND-Insurant-V3-Pro-ePa:
     type: externalJar
     startupTimeoutSec: 240
     source:
-      - "local:targetV3proEpa/testdriverSim.jar"
+      - "local:../../../../targetV3proEpa/testdriverSim.jar"
     healthcheckUrl: https://127.0.0.1:8104/actuator/health
     environment:
       - SERVER_PORT=8104
@@ -23,7 +28,7 @@ servers:
       - spring.application.name=F_Android_Insurant_V3
       - db.port=${TIM_DB_PORT_V3_PROEPA:5437}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11,v1.12
 
   testdriverApi-G-AND-Pro-V3-Pro-ePa:
@@ -31,7 +36,7 @@ servers:
     dependsUpon: testdriverApi-F-AND-Insurant-V3-Pro-ePa
     startupTimeoutSec: 240
     source:
-      - "local:targetV3proEpa/testdriverSim.jar"
+      - "local:../../../../targetV3proEpa/testdriverSim.jar"
     healthcheckUrl: https://127.0.0.1:8105/actuator/health
     environment:
       - SERVER_PORT=8105
@@ -46,7 +51,7 @@ servers:
       - spring.application.name=G_Android_Pro_V3
       - db.port=${TIM_DB_PORT_V3_PROEPA:5437}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11
 
   testdriverApi-G-ORG-Pro-ePa:
@@ -54,7 +59,7 @@ servers:
     dependsUpon: testdriverApi-G-AND-Pro-V3-Pro-ePa
     startupTimeoutSec: 240
     source:
-      - "local:targetV3proEpa/testdriverSim.jar"
+      - "local:../../../../targetV3proEpa/testdriverSim.jar"
     healthcheckUrl: https://127.0.0.1:8106/actuator/health
     environment:
       - SERVER_PORT=8106
@@ -69,7 +74,7 @@ servers:
       - spring.application.name=JG_Org
       - db.port=${TIM_DB_PORT_V3_PROEPA:5437}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11,v1.12
 
   testdriverApi-H-AND-Ref-Impl-Pro-ePa:
@@ -77,7 +82,7 @@ servers:
     dependsUpon: testdriverApi-G-ORG-Pro-ePa
     startupTimeoutSec: 240
     source:
-      - "local:targetV3proEpa/testdriverSim.jar"
+      - "local:../../../../targetV3proEpa/testdriverSim.jar"
     healthcheckUrl: https://127.0.0.1:8107/actuator/health
     environment:
       - SERVER_PORT=8107
@@ -93,7 +98,7 @@ servers:
       - spring.application.name=H_Android_Ref_Impl
       - db.port=${TIM_DB_PORT_V3_PROEPA:5437}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11
 
   testdriverApi-H-ORG-Pro-ePa:
@@ -101,7 +106,7 @@ servers:
     dependsUpon: testdriverApi-H-AND-Ref-Impl-Pro-ePa
     startupTimeoutSec: 240
     source:
-      - "local:targetV3proEpa/testdriverSim.jar"
+      - "local:../../../../targetV3proEpa/testdriverSim.jar"
     healthcheckUrl: https://127.0.0.1:8108/actuator/health
     environment:
       - SERVER_PORT=8108
@@ -117,5 +122,5 @@ servers:
       - spring.application.name=H_Org
       - db.port=${TIM_DB_PORT_V3_PROEPA:5437}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11,v1.12

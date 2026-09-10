@@ -6,7 +6,7 @@ info:
     
     This API contains all endpoints for version 1.1.x, version 2 (TIM Pro & TIM ePA) and version 3 (TIM Pro & TIM ePA) of the TI-Messenger. The tags named accordingly can be used to find the endpoints applicable for the desired version.
     Additionally each endpoint summary will contain a note describing whether the endpoint is used by an org-admin, a client or both.
-  version: 2.4.0
+  version: 2.4.1
   contact:
     name: gematik GmbH
     email: software-development@gematik.de
@@ -666,8 +666,10 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
         "501":
-          description: "Unimplemented - if the underlying client does not support practitioner FHIR-VZD administration"
+          $ref: "#/components/responses/NotImplemented"
         default:
           $ref: "#/components/responses/DefaultResponse"
 
@@ -687,8 +689,10 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
         "501":
-          description: "Unimplemented - if the underlying client does not support practitioner FHIR-VZD administration"
+          $ref: "#/components/responses/NotImplemented"
         default:
           $ref: "#/components/responses/DefaultResponse"
 
@@ -719,8 +723,10 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
         "501":
-          description: "Unimplemented - if the underlying client does not support practitioner FHIR-VZD administration"
+          $ref: "#/components/responses/NotImplemented"
         default:
           $ref: "#/components/responses/DefaultResponse"
 
@@ -740,8 +746,10 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
         "501":
-          description: "Unimplemented - if the underlying client does not support practitioner FHIR-VZD administration"
+          $ref: "#/components/responses/NotImplemented"
         default:
           $ref: "#/components/responses/DefaultResponse"
 
@@ -767,8 +775,10 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
         "501":
-          description: "Unimplemented - if the underlying client does not support FHIR-VZD authentication"
+          $ref: "#/components/responses/NotImplemented"
         default:
           $ref: "#/components/responses/DefaultResponse"
 
@@ -800,8 +810,10 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
         "501":
-          description: "Unimplemented - if the underlying client does not support practitioner FHIR-VZD administration"
+          $ref: "#/components/responses/NotImplemented"
         default:
           $ref: "#/components/responses/DefaultResponse"
 
@@ -826,8 +838,10 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
         "501":
-          description: "Unimplemented - if the underlying client does not support practitioner FHIR-VZD administration"
+          $ref: "#/components/responses/NotImplemented"
         default:
           $ref: "#/components/responses/DefaultResponse"
 
@@ -848,8 +862,10 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
         "501":
-          description: "Unimplemented - if the underlying client does not support practitioner FHIR-VZD administration"
+          $ref: "#/components/responses/NotImplemented"
         default:
           $ref: "#/components/responses/DefaultResponse"
 
@@ -1211,6 +1227,10 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "501":
+          $ref: "#/components/responses/NotImplemented"
         default:
           $ref: "#/components/responses/DefaultResponse"
 
@@ -2044,6 +2064,18 @@ components:
             $ref: "#/components/schemas/Error"
     BadRequest:
       description: "Bad Request"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    MethodNotAllowed:
+      description: "Method Not Allowed"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotImplemented:
+      description: "Not Implemented"
       content:
         application/json:
           schema:

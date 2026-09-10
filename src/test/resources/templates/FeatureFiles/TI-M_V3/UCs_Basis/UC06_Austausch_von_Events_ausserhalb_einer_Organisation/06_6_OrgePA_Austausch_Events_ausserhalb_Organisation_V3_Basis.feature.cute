@@ -227,12 +227,12 @@ Funktionalität: 5.1.6 (6) Austausch von Events zwischen Akteuren außerhalb ein
     Und        "A" erstellt einen Chat-Raum "TIM Testraum 1"
     Und        "B" loggt sich im TI-Messenger aus
     Und        "A" lädt "B" in Chat-Raum "TIM Testraum 1" ein
-    Wenn       "A" sendet ein Attachment "bild.jpg" als "m.image" an den Raum "TIM Testraum 1"
+    Wenn       "A" sendet ein Attachment "bild.jpg" als "m.file" an den Raum "TIM Testraum 1"
     Wenn       "B" loggt sich im TI-Messenger ein
     Dann       "B" erhält eine Einladung in Raum "TIM Testraum 1" von "A"
     Und        "B" bestätigt eine Einladung in Raum "TIM Testraum 1" von "A"
     Und        "B" ist dem Raum "TIM Testraum 1" beigetreten
-    Dann       "B" empfängt das Attachment "bild.jpg" von "A" im Raum "TIM Testraum 1" über Matrix-Protokoll v1.11 als "m.image"
+    Dann       "B" empfängt das Attachment "bild.jpg" von "A" im Raum "TIM Testraum 1" über Matrix-Protokoll v1.11 als "m.file"
 
     @DistinctProperty(homeserver)
     @AllowSelfCombine(false)

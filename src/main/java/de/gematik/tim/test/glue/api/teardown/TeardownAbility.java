@@ -20,13 +20,6 @@
 
 package de.gematik.tim.test.glue.api.teardown;
 
-import static de.gematik.tim.test.glue.api.ActorMemoryKeys.IS_LOGGED_IN;
-import static de.gematik.tim.test.glue.api.login.LoginTask.login;
-import static de.gematik.tim.test.glue.api.utils.IndividualLogger.individualLog;
-import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.addFailedActor;
-import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.isActorFailed;
-import static java.util.Objects.nonNull;
-
 import de.gematik.tim.test.glue.api.devices.UseDeviceAbility;
 import de.gematik.tim.test.glue.api.login.IsLoggedInAbility;
 import lombok.Getter;
@@ -36,23 +29,37 @@ import net.serenitybdd.screenplay.Ability;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.HasTeardown;
 import net.serenitybdd.screenplay.RefersToActor;
+import net.thucydides.core.steps.StepEventBus;
 import org.opentest4j.AssertionFailedError;
+
+import static de.gematik.tim.test.glue.api.ActorMemoryKeys.IS_LOGGED_IN;
+import static de.gematik.tim.test.glue.api.login.LoginTask.login;
+import static de.gematik.tim.test.glue.api.utils.IndividualLogger.individualLog;
+import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.addFailedActor;
+import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.isActorFailed;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 public abstract class TeardownAbility implements RefersToActor, Ability, HasTeardown {
 
-  @Getter protected Actor actor;
-  @Setter protected boolean tearedDown = false;
+  @Getter  protected Actor actor;
+  @Setter  protected boolean tearedDown = false;
 
   @Override
   public void tearDown() {
     if (tearedDown || isActorFailed(actor)) {
       return;
     }
+    // Serenity's StepInterceptor calls throwPendingExceptionIfNecessary() after every step.
+    // That re-throws whatever failure was stored in the StepEventBus — even if it came from
+    // a test-body step that failed long before teardown started.  Clearing the bus here
+    // prevents that re-propagation; the test outcome (FAILED) is already committed in
+    // BaseStepListener's TestOutcome and is unaffected.
+    StepEventBus.getEventBus().clearStepFailures();
     if (actor.recall(IS_LOGGED_IN) != null
-        && !(boolean) actor.recall(IS_LOGGED_IN)
-        && !(this instanceof UseDeviceAbility)
-        && !(this instanceof IsLoggedInAbility)) {
+            && !(boolean) actor.recall(IS_LOGGED_IN)
+            && !(this instanceof UseDeviceAbility)
+            && !(this instanceof IsLoggedInAbility)) {
       actor.attemptsTo(login());
     }
     for (Class<? extends TeardownAbility> abilityClass : TeardownOrder.before(this)) {
@@ -63,9 +70,9 @@ public abstract class TeardownAbility implements RefersToActor, Ability, HasTear
         } catch (TeardownException | AssertionFailedError e) {
           log.error("Ability tearDown was not successful, skipping teardown for current actor", e);
           individualLog(
-              "Ability teardown for actor %s failed".formatted(actor.getName()),
-              "ExceptionMessage",
-              e.getMessage());
+                  "Ability teardown for actor %s failed".formatted(actor.getName()),
+                  "ExceptionMessage",
+                  e.getMessage());
           addFailedActor(actor);
         }
       }
@@ -78,9 +85,9 @@ public abstract class TeardownAbility implements RefersToActor, Ability, HasTear
     } catch (TeardownException | AssertionFailedError e) {
       log.error("TearDown was not successful, skipping teardown for current actor", e);
       individualLog(
-          "Teardown for actor %s failed".formatted(actor.getName()),
-          "ExceptionMessage",
-          e.getMessage());
+              "Teardown for actor %s failed".formatted(actor.getName()),
+              "ExceptionMessage",
+              e.getMessage());
       addFailedActor(actor);
     }
     tearedDown = true;

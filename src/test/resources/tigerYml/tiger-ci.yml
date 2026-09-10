@@ -1,7 +1,13 @@
+lib:
+  createRbelHtmlReports: ${GENERATE_RBEL_LOGS|true}
+
 # default local Tiger Proxy
 tigerProxy:
   tls:
     forwardMutualTlsIdentity: "${TIM_KEYSTORE};${TIM_KEYSTORE_PW};pkcs12"
+
+  activateRbelParsing: ${GENERATE_RBEL_LOGS|true}
+  rbelBufferSizeInMb: ${RBEL_BUFFER_SIZE_MB|1024}
 
 servers:
   testdriverApi-A-WIN-Client:
@@ -22,7 +28,7 @@ servers:
       - spring.application.name=A_Windows_Client
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
 
   testdriverApi-A-ORG:
     type: externalJar
@@ -43,7 +49,7 @@ servers:
       - spring.application.name=A_ORG
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
 
   testdriverApi-B-WIN-Client:
     type: externalJar
@@ -63,7 +69,7 @@ servers:
       - spring.application.name=B_Windows_Client
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
 
   testdriverApi-B-ORG:
     type: externalJar
@@ -84,7 +90,7 @@ servers:
       - spring.application.name=B_ORG
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
 
   testdriverApi-C-IOS-Insurant:
     type: externalJar
@@ -104,7 +110,7 @@ servers:
       - spring.application.name=C_IOS_Insurant
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11
 
   testdriverApi-D-WIN-Pro:
@@ -125,7 +131,7 @@ servers:
       - spring.application.name=D_Windows_Pro
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11
 
   testdriverApi-D-ORG:
@@ -147,7 +153,7 @@ servers:
       - spring.application.name=D_Org
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11
 
   testdriverApi-E-WIN-Pro:
@@ -168,7 +174,7 @@ servers:
       - spring.application.name=E_Windows_Pro
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11
 
   testdriverApi-E-ORG:
@@ -190,7 +196,7 @@ servers:
       - spring.application.name=E_Org
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11
 
   testdriverApi-F-AND-Insurant-V3:
@@ -212,7 +218,7 @@ servers:
       - spring.application.name=F_Android_Insurant_V3
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11,v1.12
 
   testdriverApi-G-AND-Pro-V3:
@@ -234,7 +240,7 @@ servers:
       - spring.application.name=G_Android_Pro_V3
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11
 
   testdriverApi-G-ORG:
@@ -257,7 +263,7 @@ servers:
       - spring.application.name=G_Org
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11,v1.12
 
   testdriverApi-H-AND-Ref-Impl:
@@ -280,7 +286,7 @@ servers:
       - spring.application.name=H_Android_Ref_Impl
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11
 
   testdriverApi-H-ORG:
@@ -304,5 +310,5 @@ servers:
       - spring.application.name=H_Org
       - db.port=${TIM_DB_PORT:5432}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11,v1.12
