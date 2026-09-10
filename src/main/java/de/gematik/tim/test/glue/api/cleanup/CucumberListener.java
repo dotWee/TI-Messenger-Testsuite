@@ -24,13 +24,13 @@ import static de.gematik.tim.test.glue.api.cleanup.CleanupTrigger.removeClientOn
 import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.createTestcaseId;
 import static de.gematik.tim.test.glue.api.utils.TestcasePropertiesManager.setDryRun;
 
-import io.cucumber.core.plugin.SerenityReporterParallel;
 import io.cucumber.core.runner.TestCaseDelegate;
+import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 
-public class CucumberListener extends SerenityReporterParallel {
+public class CucumberListener implements EventListener {
 
   @Override
   public void setEventPublisher(EventPublisher publisher) {

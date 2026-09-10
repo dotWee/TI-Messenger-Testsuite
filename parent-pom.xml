@@ -12,7 +12,7 @@
   <description>Properties and dependencies for Testsuite</description>
 
   <properties>
-    <revision>3.1.3</revision>
+    <revision>3.1.4</revision>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <java.version>21</java.version>
@@ -21,16 +21,14 @@
     <cucumber-test-combinations-maven-plugin.version>
       2.13.1
     </cucumber-test-combinations-maven-plugin.version>
-    <tiger.version>4.0.9</tiger.version>
-    <serenity.core.version>5.3.10</serenity.core.version>
-    <polarion.toolbox.version>3.1.0-223</polarion.toolbox.version>
-    <ti.m.mtls.certs.version>2.2.8</ti.m.mtls.certs.version>
-    <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
+    <logback.version>1.5.34</logback.version>
+    <lombok.version>1.18.46</lombok.version>
     <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
     <maven.dependency.plugin.version>3.9.0</maven.dependency.plugin.version>
-    <lombok.version>1.18.46</lombok.version>
-    <logback.version>1.5.34</logback.version>
-
+    <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
+    <polarion.toolbox.version>3.1.0-223</polarion.toolbox.version>
+    <ti.m.mtls.certs.version>2.2.9</ti.m.mtls.certs.version>
+    <tiger.version>4.4.2</tiger.version>
 
     <serenity.report.directory>${project.build.directory}/site/serenity</serenity.report.directory>
     <ti.m.mtls.output.directory>${project.build.directory}/profile-resources</ti.m.mtls.output.directory>
@@ -99,11 +97,22 @@
     </snapshotRepository>
   </distributionManagement>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>de.gematik.test</groupId>
+        <artifactId>tiger-bom</artifactId>
+        <version>${tiger.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>de.gematik.test</groupId>
       <artifactId>tiger-test-lib</artifactId>
-      <version>${tiger.version}</version>
     </dependency>
     <dependency>
       <groupId>net.sf.supercsv</groupId>
@@ -129,12 +138,10 @@
     <dependency>
       <groupId>net.serenity-bdd</groupId>
       <artifactId>serenity-screenplay-rest</artifactId>
-      <version>${serenity.core.version}</version>
     </dependency>
     <dependency>
       <groupId>net.serenity-bdd</groupId>
       <artifactId>serenity-ensure</artifactId>
-      <version>${serenity.core.version}</version>
     </dependency>
     <dependency>
       <groupId>com.nimbusds</groupId>

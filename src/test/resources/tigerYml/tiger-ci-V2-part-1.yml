@@ -1,14 +1,19 @@
+lib:
+  createRbelHtmlReports: ${GENERATE_RBEL_LOGS|true}
+
 # default local Tiger Proxy
 tigerProxy:
   tls:
     forwardMutualTlsIdentity: "${TIM_KEYSTORE};${TIM_KEYSTORE_PW};pkcs12"
+  activateRbelParsing: ${GENERATE_RBEL_LOGS|true}
+  rbelBufferSizeInMb: ${RBEL_BUFFER_SIZE_MB|1024}
 
 servers:
   testdriverApi-C-IOS-Insurant-Part-1:
     type: externalJar
     startupTimeoutSec: 240
     source:
-      - "local:targetV2part1/testdriverSim.jar"
+      - "local:../../../../targetV2part1/testdriverSim.jar"
     healthcheckUrl: https://127.0.0.1:8084/actuator/health
     environment:
       - SERVER_PORT=8084
@@ -22,7 +27,7 @@ servers:
       - spring.application.name=C_IOS_Insurant
       - db.port=${TIM_DB_PORT_V2_PART_1:5433}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11
 
   testdriverApi-D-WIN-Pro-Part-1:
@@ -30,7 +35,7 @@ servers:
     dependsUpon: testdriverApi-C-IOS-Insurant-Part-1
     startupTimeoutSec: 240
     source:
-      - "local:targetV2part1/testdriverSim.jar"
+      - "local:../../../../targetV2part1/testdriverSim.jar"
     healthcheckUrl: https://127.0.0.1:8085/actuator/health
     environment:
       - SERVER_PORT=8085
@@ -44,7 +49,7 @@ servers:
       - spring.application.name=D_Windows_Pro
       - db.port=${TIM_DB_PORT_V2_PART_1:5433}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11
 
   testdriverApi-D-ORG-Part-1:
@@ -52,7 +57,7 @@ servers:
     dependsUpon: testdriverApi-D-WIN-Pro-Part-1
     startupTimeoutSec: 240
     source:
-      - "local:targetV2part1/testdriverSim.jar"
+      - "local:../../../../targetV2part1/testdriverSim.jar"
     healthcheckUrl: https://127.0.0.1:8086/actuator/health
     environment:
       - SERVER_PORT=8086
@@ -66,7 +71,7 @@ servers:
       - spring.application.name=D_Org
       - db.port=${TIM_DB_PORT_V2_PART_1:5433}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11
 
   testdriverApi-E-WIN-Pro-Part-1:
@@ -74,7 +79,7 @@ servers:
     dependsUpon: testdriverApi-D-ORG-Part-1
     startupTimeoutSec: 240
     source:
-      - "local:targetV2part1/testdriverSim.jar"
+      - "local:../../../../targetV2part1/testdriverSim.jar"
     healthcheckUrl: https://127.0.0.1:8087/actuator/health
     environment:
       - SERVER_PORT=8087
@@ -88,7 +93,7 @@ servers:
       - spring.application.name=E_Windows_Pro
       - db.port=${TIM_DB_PORT_V2_PART_1:5433}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11
 
   testdriverApi-E-ORG-Part-1:
@@ -96,7 +101,7 @@ servers:
     dependsUpon: testdriverApi-E-WIN-Pro-Part-1
     startupTimeoutSec: 240
     source:
-      - "local:targetV2part1/testdriverSim.jar"
+      - "local:../../../../targetV2part1/testdriverSim.jar"
     healthcheckUrl: https://127.0.0.1:8088/actuator/health
     environment:
       - SERVER_PORT=8088
@@ -110,5 +115,5 @@ servers:
       - spring.application.name=E_Org
       - db.port=${TIM_DB_PORT_V2_PART_1:5433}
       - db.host=${docker.host.hostname:localhost}
-      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx512m
+      - JAVA_TOOL_OPTIONS=-Xms64m -Xmx256m
       - matrix.client.versions=r0.0.1,r0.1.0,r0.2.0,r0.3.0,r0.4.0,r0.5.0,r0.6.0,r0.6.1,v1.1,v1.2,v1.3,v1.11

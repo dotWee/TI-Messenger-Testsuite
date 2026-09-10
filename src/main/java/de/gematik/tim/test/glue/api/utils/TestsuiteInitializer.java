@@ -106,7 +106,7 @@ public class TestsuiteInitializer {
   private static final String KEY_STORE_PW_ENV_VAR = "TIM_KEYSTORE_PW";
   private static final String RUN_WITHOUT_CERT = "no configured cert found";
 
-  @Getter private static final Jackson2Mapper fhirMapper;
+  @Getter private static final Jackson2Mapper strictMapper;
   static Long pollInterval;
 
   static {
@@ -175,9 +175,9 @@ public class TestsuiteInitializer {
       }
     }
 
-    fhirMapper = createMapper();
+    strictMapper = createMapper();
     ObjectMapperConfig mapperConfig = RestAssured.config().getObjectMapperConfig();
-    mapperConfig.defaultObjectMapper(getFhirMapper());
+    mapperConfig.defaultObjectMapper(getStrictMapper());
     RestAssured.config().objectMapperConfig(mapperConfig);
     addHostsToTigerProxy();
     configRestAssured();
@@ -224,7 +224,7 @@ public class TestsuiteInitializer {
     return new Jackson2Mapper(
         (type, string) -> {
           ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-          objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+          objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
           return objectMapper;
         });
   }

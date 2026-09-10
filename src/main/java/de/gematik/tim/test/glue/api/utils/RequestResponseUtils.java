@@ -143,9 +143,9 @@ public class RequestResponseUtils {
     try {
       if (FhirBaseResourceDTO.class.isAssignableFrom(clazz)
           || clazz.isInstance(new FhirSearchResultDTO())) {
-        return lastResponse().as(clazz, TestsuiteInitializer.getFhirMapper());
+        return lastResponse().as(clazz);
       }
-      return lastResponse().as(clazz);
+      return lastResponse().as(clazz, TestsuiteInitializer.getStrictMapper());
     } catch (Exception e) {
       log.error("Could not parse response: ", e);
       throw new TestRunException(

@@ -13,6 +13,30 @@
 [
 `docu Testset_V3.adoc`](https://github.com/gematik/TI-Messenger-Testsuite/tree/main/doc/userguide/Testset_V3.adoc)
 
+## Release 3.1.4
+
+### Known issues
+
+- Due to the stricter validation of message editing, the listed V2 tests will fail against the reference implementation.
+  This will be adjusted in a future release of the reference implementation: @TCID:TIM_V2_BASIS_AF_040108, @TCID:
+  TIM_V2_BASIS_AF_040112, @TCID:TIM_V2_BASIS_AF_040903, @TCID:TIM_V2_BASIS_AF_040906, @TCID:TIM_V2_BASIS_AF_060106,
+  @TCID:TIM_V2_BASIS_AF_060110, @TCID:TIM_V2_BASIS_AF_060506, @TCID:TIM_V2_BASIS_AF_060510, @TCID:
+  TIM_V2_BASIS_AF_060606, and @TCID:TIM_V2_BASIS_AF_060610
+
+### Bugfixes
+
+Thanks to dotWee:
+
+- fixes broken yaml 1.2 syntax in the test driver API
+
+### Changes
+
+- test driver API: Clarifies available error codes for deleteMessageViaReplace
+- changed file type of attachment to m.file in @TCID:TIM_V3_BASIS_AF_060108 & @TCID:TIM_V3_BASIS_AF_060508 & @TCID:TIM_V3_BASIS_AF_060608 
+- dependency updates:
+    - Bumps de.gematik.test:tiger from 4.0.9 to 4.4.2
+    - Bumps org.apache.maven.plugins:maven-surefire-plugin from 3.5.6 → 3.6.0
+
 ## Release 3.1.3
 
 ### Known issues
